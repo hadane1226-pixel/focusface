@@ -249,29 +249,46 @@
     saveFilter();
   });
 
-  function isBorder(spot, h) {
-    var i = RANKS.indexOf(h[0]), j = RANKS.indexOf(h[1]);
-    if (h[2] === "o") { var t = i; i = j; j = t; }
-    var me = mainAction(freqs(spot, h));
-    var nb = [[i - 1, j], [i + 1, j], [i, j - 1], [i, j + 1]];
-    for (var k = 0; k < nb.length; k++) {
-      var a = nb[k][0], b = nb[k][1];
-      if (a < 0 || b < 0 || a > 12 || b > 12) continue;
-      if (mainAction(freqs(spot, handAt(a, b))) !== me) return true;
+  // 경계 핸드: 같은 하이카드 안에서 키커가 한 단계 내려갈 때 액션이 바뀌는 지점의 양쪽
+  // (예: K9s 오픈 / K8s 폴드), 페어는 한 단계 낮은 페어와 비교, 혼합 빈도 핸드는 항상 경계
+  function borderHands(spot) {
+    var set = {};
+    function scan(seq) {
+      for (var k = 0; k + 1 < seq.length; k++) {
+        if (mainAction(freqs(spot, seq[k])) !== mainAction(freqs(spot, seq[k + 1]))) {
+          set[seq[k]] = set[seq[k + 1]] = true;
+        }
+      }
     }
-    return false;
+    var pairs = [];
+    for (var i = 0; i < 13; i++) {
+      var suited = [], offsuit = [];
+      for (var j = i + 1; j < 13; j++) { suited.push(handAt(i, j)); offsuit.push(handAt(j, i)); }
+      scan(suited); scan(offsuit);
+      pairs.push(handAt(i, i));
+    }
+    scan(pairs);
+    HANDS.forEach(function (h) {
+      var f = freqs(spot, h);
+      if (Math.max(f.F, f.R, f.A) < 0.999) set[h] = true;
+    });
+    return Object.keys(set);
   }
 
   function pick(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
 
+  function pickByCombos(list) {
+    var total = list.reduce(function (n, h) { return n + combos(h); }, 0), r = Math.random() * total;
+    for (var k = 0; k < list.length; k++) { r -= combos(list[k]); if (r <= 0) return list[k]; }
+    return list[list.length - 1];
+  }
+
   function pickHand(spot) {
-    var total = 0, w = HANDS.map(function (h) {
-      var x = combos(h) * (qf.border && isBorder(spot, h) ? 6 : 1);
-      total += x; return x;
-    });
-    var r = Math.random() * total;
-    for (var k = 0; k < HANDS.length; k++) { r -= w[k]; if (r <= 0) return HANDS[k]; }
-    return HANDS[HANDS.length - 1];
+    if (qf.border && Math.random() < 0.85) {
+      var b = borderHands(spot);
+      if (b.length) return pick(b);
+    }
+    return pickByCombos(HANDS);
   }
 
   function dealSuits(h) {
