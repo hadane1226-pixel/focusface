@@ -1,7 +1,6 @@
 (function () {
   "use strict";
 
-  var R = window.RANGES;
   var RANKS = "AKQJT98765432";
   var SEATS = ["UTG", "UTG+1", "LJ", "HJ", "CO", "BTN", "SB", "BB"];
   var NAMES = { F: "폴드", R: "레이즈", A: "올인" };
@@ -13,8 +12,27 @@
     catch (e) { return fallback; }
   }
   function save(key, val) {
-    try { localStorage.setItem("ff." + key, JSON.stringify(val)); } catch (e) {}
+    try { localStorage.setItem("ff." + key, JSON.stringify(val)); return true; } catch (e) { return false; }
   }
+  function drop(key) {
+    try { localStorage.removeItem("ff." + key); } catch (e) {}
+  }
+
+  // 불러온 ranges.js가 있으면 기본 데이터 대신 쓴다 (이 브라우저에만)
+  function validRanges(d) {
+    if (!d || !Array.isArray(d.stacks) || !Array.isArray(d.positions) || !d.spots) return false;
+    return d.stacks.length > 0 && d.positions.length > 0 && d.stacks.every(function (s) {
+      return d.spots[s] && d.positions.every(function (p) { return d.spots[s][p] && typeof d.spots[s][p] === "object"; });
+    });
+  }
+  function parseRangesFile(text) {
+    var m = /^\s*(\/\/.*\n\s*)*window\.RANGES\s*=/.exec(text);
+    var body = m ? text.slice(m[0].length) : text;
+    return JSON.parse(body.trim().replace(/;\s*$/, ""));
+  }
+  var imported = load("imported", null);
+  var usingImport = validRanges(imported);
+  var R = usingImport ? imported : window.RANGES;
 
   // ---------- hands & ranges ----------
   function handAt(i, j) {
@@ -152,12 +170,47 @@
   function bb(s) { return s + "bb"; }
 
   // ---------- notice ----------
-  if (R.meta && R.meta.source === "approx") {
-    var n = $("notice");
-    n.hidden = false;
-    n.innerHTML = "<b>학습용 근사 레인지</b> · " + R.meta.note +
+  var notice = $("notice");
+  if (usingImport) {
+    notice.hidden = false;
+    notice.innerHTML = "<b>불러온 레인지 사용 중</b> · 이 브라우저에만 적용된다. ";
+    var back = document.createElement("button");
+    back.className = "linkbtn";
+    back.textContent = "기본 데이터로 되돌리기";
+    back.addEventListener("click", function () {
+      if (!confirm("불러온 레인지를 지우고 기본 데이터로 돌아갈까요?")) return;
+      drop("imported");
+      location.reload();
+    });
+    notice.appendChild(back);
+  } else if (R.meta && R.meta.source === "approx") {
+    notice.hidden = false;
+    notice.innerHTML = "<b>학습용 근사 레인지</b> · " + R.meta.note +
       " 실제 solver 차트는 GTOWizard 등에서 직접 확인하고, <b>차트 보기 → 편집</b>으로 옮겨 적을 수 있다.";
   }
+
+  // ---------- 불러오기 ----------
+  document.querySelector('label[for="c-import-file"]').addEventListener("keydown", function (e) {
+    if (e.key === "Enter" || e.key === " ") { e.preventDefault(); $("c-import-file").click(); }
+  });
+  $("c-import-file").addEventListener("change", function () {
+    var file = this.files && this.files[0];
+    this.value = "";
+    if (!file) return;
+    file.text().then(function (text) {
+      var data;
+      try { data = parseRangesFile(text); } catch (e) { data = null; }
+      if (!validRanges(data)) {
+        alert("ranges.js 형식이 아니에요. 이 페이지에서 내보낸 파일을 선택해 주세요.");
+        return;
+      }
+      var hasEdits = Object.keys(overrides).length > 0;
+      if (hasEdits && !confirm("불러오면 지금 편집한 내용은 지워져요. 계속할까요?")) return;
+      if (!save("imported", data)) { alert("브라우저 저장소에 저장하지 못했어요."); return; }
+      drop("overrides");
+      location.reload();
+    });
+  });
 
   // ---------- mode tabs ----------
   var modeBtns = document.querySelectorAll(".modes button");
