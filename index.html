@@ -3,43 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>초보자를 위한 포커 입문 · 포커스 페이스</title>
+<title>포커스 페이스</title>
+<meta name="description" content="포커 동아리 포커스 페이스 신규부원을 위한 포커 입문과 오픈 레인지 훈련">
 <link rel="preconnect" href="https://cdn.jsdelivr.net">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+<link rel="stylesheet" href="assets/site.css">
 <style>
-  :root{
-    box-sizing:border-box;
-    --ink:#131a17;
-    --felt:#1b5e4b;
-    --felt-deep:#10231d;
-    --paper:#f5f3ec;
-    --paper-2:#eeece2;
-    --text:#1c1e1b;
-    --muted:#63665e;
-    --line:#d9d6ca;
-    --gold:#c19a3f;
-    --raise:#3f8f63;
-    --raise-bg:#dcecdf;
-    --fold:#b0492f;
-    --fold-bg:#f0dbd2;
-    --mono:"SFMono-Regular",ui-monospace,"JetBrains Mono",Menlo,Consolas,monospace;
-    --sans:"Pretendard","Apple SD Gothic Neo","Malgun Gothic",system-ui,sans-serif;
-    padding-top:env(safe-area-inset-top,0);
-    padding-bottom:env(safe-area-inset-bottom,0);
-  }
-  *,*::before,*::after{box-sizing:inherit}
-  html{scroll-behavior:smooth;scroll-padding-top:calc(env(safe-area-inset-top,0) + 16px);-webkit-text-size-adjust:100%}
-  body{
-    margin:0;font-family:var(--sans);color:var(--text);background:var(--paper);
-    line-height:1.75;font-size:17px;letter-spacing:-0.01em;
-    text-rendering:optimizeLegibility;-webkit-font-smoothing:antialiased;
-  }
-  @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto} *{animation:none!important;transition:none!important}}
-
-  /* HERO */
   .hero{
     position:relative;overflow:hidden;background:var(--felt-deep);color:#f3f1e8;
-    padding:clamp(3.5rem,9vw,7rem) 1.5rem clamp(3rem,7vw,5rem);
+    padding:calc(env(safe-area-inset-top,0) + clamp(3.5rem,9vw,6.5rem)) 1.5rem clamp(4.5rem,10vw,7rem);
   }
   .hero::before{
     content:"";position:absolute;inset:0;opacity:.13;pointer-events:none;
@@ -48,464 +20,101 @@
     -webkit-mask-image:radial-gradient(120% 90% at 78% 12%,#000,transparent 68%);
             mask-image:radial-gradient(120% 90% at 78% 12%,#000,transparent 68%);
   }
-  .hero-inner{position:relative;max-width:62rem;margin:0 auto}
-  .club{
-    display:inline-flex;align-items:center;gap:.55rem;font-size:.82rem;font-weight:600;
-    color:var(--gold);letter-spacing:.04em;margin-bottom:1.6rem;
-  }
-  .club .pip{width:.5rem;height:.5rem;background:var(--gold);border-radius:50%;display:inline-block}
-  .hero h1{
-    font-size:clamp(2.1rem,6.2vw,3.9rem);line-height:1.08;font-weight:800;margin:0 0 1.1rem;
-    letter-spacing:-0.035em;color:#fbfaf4;
-  }
+  .hero .in{position:relative;max-width:64rem;margin:0 auto}
+  .club{display:inline-flex;align-items:center;gap:.55rem;font-size:.82rem;font-weight:600;color:var(--gold);letter-spacing:.04em;margin-bottom:1.4rem}
+  .club .pip{width:.5rem;height:.5rem;background:var(--gold);border-radius:50%}
+  .hero h1{font-size:clamp(2.2rem,6.4vw,4rem);line-height:1.08;font-weight:800;margin:0 0 1rem;letter-spacing:-0.035em;color:#fbfaf4}
   .hero h1 .thin{font-weight:400;color:#bcd4c9}
-  .hero p.lede{font-size:clamp(1rem,2.5vw,1.2rem);color:#c8d3cc;max-width:40rem;margin:0}
-  .hero .note{margin-top:2rem;font-size:.92rem;color:#8fa79c;border-left:2px solid var(--gold);padding-left:1rem;max-width:38rem}
+  .hero p{font-size:clamp(1rem,2.4vw,1.15rem);color:#c8d3cc;max-width:36rem;margin:0}
 
-  /* LAYOUT */
-  .wrap{max-width:44rem;margin:0 auto;padding:0 1.4rem}
-  .shell{max-width:70rem;margin:0 auto;padding:0 1.4rem;display:grid;gap:2.5rem}
-  @media (min-width:960px){
-    .shell{grid-template-columns:15rem 1fr;align-items:start;gap:3.5rem;padding:0 2rem}
-    .toc{position:sticky;top:calc(env(safe-area-inset-top,0) + 1.5rem)}
+  .tabs{max-width:64rem;margin:-3rem auto 0;padding:0 1.2rem;position:relative;display:grid;gap:1.1rem}
+  @media (min-width:760px){.tabs{grid-template-columns:repeat(2,1fr)}}
+  .tab{
+    display:flex;flex-direction:column;background:var(--card);border:1px solid var(--line);border-radius:18px;
+    padding:1.6rem 1.5rem 1.4rem;text-decoration:none;color:var(--text);
+    box-shadow:0 1px 2px rgba(16,35,29,.05),0 8px 24px rgba(16,35,29,.07);
+    transition:transform .18s,box-shadow .18s,border-color .18s;
   }
+  .tab:hover{transform:translateY(-3px);border-color:#b9c9bf;box-shadow:0 2px 4px rgba(16,35,29,.06),0 14px 32px rgba(16,35,29,.12)}
+  .tab .kicker{font-family:var(--mono);font-size:.75rem;font-weight:600;color:var(--felt);letter-spacing:.04em;margin-bottom:.8rem}
+  .tab h2{font-size:1.55rem;line-height:1.2;margin:0 0 .6rem;font-weight:800;letter-spacing:-0.03em}
+  .tab p{margin:0 0 1.1rem;color:var(--muted);font-size:.96rem}
+  .tab ul{margin:0 0 1.4rem;padding:0;list-style:none;display:flex;flex-wrap:wrap;gap:.4rem}
+  .tab li{font-size:.78rem;background:var(--paper-2);border:1px solid var(--line);border-radius:999px;padding:.15rem .65rem;color:var(--muted)}
+  .tab .go{margin-top:auto;font-weight:700;color:var(--felt);display:inline-flex;align-items:center;gap:.4rem}
+  .tab:hover .go{gap:.7rem}
+  .tab .go{transition:gap .18s}
 
-  /* TOC */
-  .toc{padding-top:2.8rem}
-  .toc h2{font-size:.78rem;font-weight:700;color:var(--muted);letter-spacing:.05em;margin:0 0 .9rem}
-  .toc ol{list-style:none;margin:0;padding:0;counter-reset:c}
-  .toc li{counter-increment:c;margin:.15rem 0}
-  .toc a{
-    display:grid;grid-template-columns:1.6rem 1fr;gap:.5rem;align-items:baseline;
-    text-decoration:none;color:var(--muted);font-size:.9rem;padding:.28rem .35rem;border-radius:7px;
-    transition:background .15s,color .15s;
-  }
-  .toc a::before{content:counter(c);font-family:var(--mono);font-size:.78rem;color:var(--felt);font-weight:600;text-align:right}
-  .toc a:hover,.toc a:focus-visible{background:var(--paper-2);color:var(--text)}
+  .mini{display:grid;grid-template-columns:repeat(13,1fr);gap:2px;max-width:12rem;margin:0 0 1.2rem}
+  .mini i{aspect-ratio:1/1;border-radius:2px;background:var(--fold-cell)}
+  .mini i.R{background:#9ccaa9}
+  .mini i.A{background:#e3c77a}
 
-  /* CONTENT */
-  main{padding-top:2.6rem;padding-bottom:1rem}
-  .ch{padding:2.4rem 0;border-top:1px solid var(--line)}
-  .ch:first-child{border-top:0;padding-top:.6rem}
-  .ch-head{display:flex;align-items:baseline;gap:.9rem;margin-bottom:1.1rem}
-  .ch-num{
-    font-family:var(--mono);font-size:1rem;font-weight:600;color:#fff;background:var(--felt);
-    min-width:2rem;height:2rem;display:inline-flex;align-items:center;justify-content:center;border-radius:8px;flex:none;
-  }
-  .ch-head h2{font-size:clamp(1.4rem,3.6vw,1.8rem);line-height:1.2;margin:0;font-weight:800;letter-spacing:-0.03em}
-  .ch p{margin:0 0 1.05rem}
-  .ch strong{font-weight:700}
-  .ch em{font-style:normal;color:var(--felt);font-weight:600}
-  .lead{color:var(--muted)}
+  .order{max-width:64rem;margin:3.2rem auto 0;padding:0 1.2rem}
+  .order h3{font-size:.8rem;font-weight:700;color:var(--muted);letter-spacing:.05em;margin:0 0 .8rem}
+  .order ol{margin:0;padding-left:1.2rem;color:var(--muted);font-size:.95rem}
+  .order li{margin:.3rem 0}
 
-  /* term box */
-  .terms{background:var(--paper-2);border:1px solid var(--line);border-radius:12px;padding:1rem 1.2rem;margin:1.3rem 0}
-  .terms .t-label{font-size:.74rem;font-weight:700;color:var(--felt);letter-spacing:.03em;margin-bottom:.5rem}
-  .terms dl{margin:0;display:grid;gap:.5rem}
-  .terms dt{font-weight:700;font-size:.95rem}
-  .terms dd{margin:0 0 .3rem;color:var(--muted);font-size:.92rem}
-
-  /* callouts */
-  .callout{border-radius:12px;padding:1rem 1.2rem;margin:1.3rem 0;font-size:.96rem}
-  .callout .c-tag{font-size:.74rem;font-weight:700;letter-spacing:.03em;margin-bottom:.4rem}
-  .callout p{margin:.2rem 0}
-  .callout.warn{background:var(--fold-bg);border:1px solid #e2b6a6}
-  .callout.warn .c-tag{color:var(--fold)}
-  .callout.good{background:var(--raise-bg);border:1px solid #b6d5bf}
-  .callout.good .c-tag{color:var(--raise)}
-  .callout.gold{background:#f6efd9;border:1px solid #e5d19b}
-  .callout.gold .c-tag{color:#a9822c}
-
-  /* range grid */
-  .grid-wrap{margin:1.5rem 0;overflow-x:auto}
-  .rg{border-collapse:collapse;margin:0 auto;font-family:var(--mono);font-size:clamp(9px,1.9vw,12px);width:100%;max-width:34rem}
-  .rg td{
-    border:1px solid rgba(255,255,255,.6);text-align:center;padding:0;
-    aspect-ratio:1/1;color:#25332c;font-weight:600;user-select:none;position:relative;
-  }
-  .rg td span{display:flex;align-items:center;justify-content:center;width:100%;height:100%}
-  .cell-raise{background:var(--raise-bg)}
-  .cell-fold{background:#efeee6;color:#9a9a8e}
-  .cell-mark-raise{background:#3f8f63;color:#fff;outline:2px solid #235a3d;outline-offset:-2px;z-index:1}
-  .cell-mark-fold{background:#b0492f;color:#fff;outline:2px solid #7c2e1a;outline-offset:-2px;z-index:1}
-  .legend{display:flex;flex-wrap:wrap;gap:.9rem;justify-content:center;margin-top:.9rem;font-size:.82rem;color:var(--muted)}
-  .legend span{display:inline-flex;align-items:center;gap:.4rem}
-  .sw{width:.85rem;height:.85rem;border-radius:3px;display:inline-block;border:1px solid rgba(0,0,0,.15)}
-  .cap{text-align:center;font-size:.82rem;color:var(--muted);margin-top:.6rem}
-
-  /* draw table */
-  .dtable{width:100%;border-collapse:collapse;margin:1.3rem 0;font-size:.9rem}
-  .dtable th,.dtable td{border-bottom:1px solid var(--line);padding:.6rem .5rem;text-align:left}
-  .dtable th{font-weight:700;color:var(--felt);font-size:.8rem}
-  .dtable td.num{font-family:var(--mono);text-align:right;white-space:nowrap}
-
-  /* image placeholder */
-  .imgslot{
-    border:2px dashed var(--line);border-radius:12px;background:var(--paper-2);
-    padding:1.6rem;text-align:center;color:var(--muted);font-size:.86rem;margin:1.3rem 0;
-  }
-  .imgslot code{font-family:var(--mono);font-size:.8rem;background:#fff;padding:.1rem .4rem;border-radius:5px;border:1px solid var(--line)}
-
-  footer{background:var(--felt-deep);color:#a9c0b6;margin-top:3rem;padding:2.6rem 1.4rem;font-size:.86rem}
-  footer .fwrap{max-width:44rem;margin:0 auto}
+  footer{background:var(--felt-deep);color:#a9c0b6;margin-top:4rem;padding:2.4rem 1.4rem;font-size:.85rem}
+  footer .in{max-width:64rem;margin:0 auto}
   footer strong{color:#e9e5d6}
-  footer a{color:var(--gold);text-decoration:none}
-
-  a.anchor{color:var(--felt);text-decoration:none;border-bottom:1px solid rgba(27,94,75,.3)}
-  a.anchor:hover{border-color:var(--felt)}
-  ::selection{background:var(--gold);color:#1a1a17}
-  :focus-visible{outline:2px solid var(--gold);outline-offset:2px;border-radius:4px}
+  @media (prefers-reduced-motion:reduce){.tab,.tab .go{transition:none}.tab:hover{transform:none}}
 </style>
 </head>
 <body>
 
 <header class="hero">
-  <div class="hero-inner">
+  <div class="in">
     <span class="club"><span class="pip"></span>포커스 페이스 · FOCUS FACE</span>
-    <h1>초보자를 위한 포커 입문<br><span class="thin">with 용어공부</span></h1>
-    <p class="lede">이론은 크게 두 축이다. 카드가 깔리기 전(프리플랍)의 의사결정과, 깔린 뒤(포스트플랍)의 의사결정. 새 용어를 하나씩 꺼내며 그 둘을 관통하는 원칙을 세운다.</p>
-    <p class="note">미리 말해두면, 본 저자도 이 내용을 이해하는 데 4~5개월이 걸렸다. 입문이지만 어렵다. 순서대로 천천히 읽자.</p>
+    <h1>포커, 제대로 시작하기<br><span class="thin">읽고, 외우고, 시험 보기</span></h1>
+    <p>포커스 페이스 신규부원을 위한 공간. 입문 글로 원칙을 세우고, 오픈 훈련으로 손에 익힌다.</p>
   </div>
 </header>
 
-<div class="shell">
-  <nav class="toc" aria-label="목차">
-    <h2>목차</h2>
-    <ol>
-      <li><a href="#c0">카드 위치에 이름이 있다</a></li>
-      <li><a href="#c1">림프는 왜 구린가?</a></li>
-      <li><a href="#c2">뒤에 사람이 많을수록 조심스럽게</a></li>
-      <li><a href="#c3">오픈? 한번 더! 3-bet</a></li>
-      <li><a href="#c4">어쩌다 올인까지</a></li>
-      <li><a href="#c5">차가운 액션? 콜드콜</a></li>
-      <li><a href="#c6">콜 해야 되나 말아야 되나</a></li>
-      <li><a href="#c7">벳은 왜 하나요?</a></li>
-      <li><a href="#c8">기교를 부리고 싶어요</a></li>
-      <li><a href="#c9">베팅은 얼마나 해야 되지?</a></li>
-      <li><a href="#c10">C발? 아니 C벳</a></li>
-      <li><a href="#c11">스스로 궁지에 몰아넣어버렸다</a></li>
-    </ol>
-  </nav>
+<section class="tabs" aria-label="탭">
+  <a class="tab" href="intro/">
+    <span class="kicker">TAB 01 · 읽기</span>
+    <h2>초보자를 위한 포커 입문</h2>
+    <p>림프가 왜 구린지부터 SPR로 한 판을 설계하는 법까지. 용어를 하나씩 꺼내며 프리플랍과 포스트플랍의 원칙을 12장에 걸쳐 정리했다.</p>
+    <ul><li>포지션</li><li>3-bet</li><li>팟오즈</li><li>벳 사이징</li><li>C벳</li><li>SPR</li></ul>
+    <span class="go">읽으러 가기 →</span>
+  </a>
 
-  <main>
+  <a class="tab" href="train/">
+    <span class="kicker">TAB 02 · 훈련</span>
+    <h2>오픈 훈련하기</h2>
+    <p>스택 깊이 9단계(100bb~15bb)와 포지션별 오픈 레인지를 보고, 핸드 퀴즈와 차트 칠하기 시험으로 외운다.</p>
+    <div class="mini" id="mini" aria-hidden="true"></div>
+    <span class="go">훈련 시작 →</span>
+  </a>
+</section>
 
-    <!-- 0 -->
-    <section class="ch" id="c0">
-      <div class="ch-head"><span class="ch-num">0</span><h2>카드 위치에 이름이 있다</h2></div>
-      <p class="lead">포커 한 판은 네 단계로 진행된다. 각 단계마다 이름이 있고, 앞으로 계속 쓸 단어들이니 여기서 익히고 가자.</p>
-      <div class="terms">
-        <div class="t-label">용어</div>
-        <dl>
-          <dt>프리플랍 (Preflop)</dt><dd>각자 자기 카드 2장만 받은 상태. 공용 카드는 아직 없다. 판이 시작되는 첫 베팅 단계.</dd>
-          <dt>플랍 (Flop)</dt><dd>테이블 가운데 공용 카드 3장이 깔린다. 여기서 내 손이 비로소 무언가가 되기 시작한다.</dd>
-          <dt>턴 (Turn)</dt><dd>공용 카드 4번째 장.</dd>
-          <dt>리버 (River)</dt><dd>공용 카드 5번째 장. 마지막이다.</dd>
-          <dt>팟 (Pot)</dt><dd>지금까지 테이블에 모인 돈. 이 판에서 싸워서 가져갈 대상.</dd>
-        </dl>
-      </div>
-      <p>이 블로그의 이론은 두 덩어리로 나뉜다. 카드가 깔리기 전 <em>프리플랍</em>에서 어떻게 결정하느냐가 하나, 카드가 깔린 뒤 <em>포스트플랍</em>에서 어떻게 결정하느냐가 다른 하나다.</p>
-    </section>
-
-    <!-- 1 -->
-    <section class="ch" id="c1">
-      <div class="ch-head"><span class="ch-num">1</span><h2>림프는 왜 구린가?</h2></div>
-      <p>내 차례가 왔을 때, 판에 들어가는 방법은 두 가지다.</p>
-      <div class="terms">
-        <div class="t-label">용어</div>
-        <dl>
-          <dt>오픈 (Open)</dt><dd>첫 액션으로 레이즈하며 들어가는 것. 돈을 키우며 주도권을 잡는다.</dd>
-          <dt>림프 (Limp)</dt><dd>레이즈 없이 최소 금액(빅블라인드)만 맞춰 슬쩍 들어가는 것.</dd>
-        </dl>
-      </div>
-      <p>초보자가 림프를 하는 속마음은 대개 하나다. <strong>"플랍을 싸게 보자."</strong> 그런데 림프는 바로 그 목적을 달성하지 못한다. 이게 림프가 구린 가장 큰 이유다.</p>
-      <p>비교해보자. 오픈 레이즈로 들어가면 보통 <em>2bb</em>만 내고 플랍을 볼 수 있다. 반면 오픈 림프로 들어가면, 뒤에 남은 사람이 "쟤 약하네" 하고 <em>3~4bb 스퀴즈</em>를 때릴 확률이 높다. 그럼 나는 그 금액을 콜해야 겨우 플랍을 본다. 결국 <strong>주도권은 주도권대로 내주고, 돈은 돈대로 더 내는</strong> 비효율적인 방법이 된다.</p>
-      <div class="callout warn">
-        <div class="c-tag">그래서</div>
-        <p>"싸게 보려던" 림프가 오히려 더 비싸진다. 들어갈 거면 레이즈, 아니면 폴드. 어떤 카드로 오픈할지는 이미 정리된 표가 있다. <em>오픈/폴드 차트</em>라고 부르는 커닝페이퍼다. 다음 장에서 이걸 읽는 법을 본다.</p>
-      </div>
-      <p class="lead">참고: 홀덤스쿨 영상에도 림프의 비효율에 대한 비슷한 설명이 있다.</p>
-    </section>
-
-    <!-- 2 -->
-    <section class="ch" id="c2">
-      <div class="ch-head"><span class="ch-num">2</span><h2>뒤에 사람이 많을수록 조심스럽게</h2></div>
-      <p>오픈/폴드 차트를 보면 <strong>자리(포지션)마다 오픈하는 카드 범위가 다르다.</strong> 자리부터 익히자.</p>
-      <div class="terms">
-        <div class="t-label">용어 · 포지션</div>
-        <dl>
-          <dt>UTG · UTG+1 · UTG+2</dt><dd>가장 먼저 액션하는 앞자리들.</dd>
-          <dt>LJ · HJ · CO</dt><dd>중간에서 뒤로 넘어가는 자리들.</dd>
-          <dt>D (버튼)</dt><dd>프리플랍 이후 항상 마지막에 액션하는 최고의 자리.</dd>
-          <dt>SB · BB</dt><dd>강제로 돈을 미리 낸 블라인드. 플랍부터는 먼저 액션한다.</dd>
-        </dl>
-      </div>
-      <p>다 외우기 벅차면 네 덩어리로 묶자. 앞자리 <em>EP</em>, 중간 <em>MP</em>, 뒷자리 <em>LP</em>, 그리고 <em>Blinds</em>. 핵심 원칙은 하나다. <strong>앞자리일수록 좁게, 뒷자리일수록 넓게.</strong> 앞자리에서 오픈하면 아직 액션 안 한 사람이 뒤에 잔뜩 남아 위험하고, 뒷자리는 그 위험이 작기 때문이다.</p>
-
-      <div class="callout gold">
-        <div class="c-tag">초보자가 놓치는 핵심</div>
-        <p>핸드의 세기는 <strong>equity(승률)</strong> 하나로 정해지지 않는다. <strong>playability(플랍 이후 다루기 쉬운 정도)</strong>도 같이 본다. 그래서 UTG에서 <em>56s는 오픈</em>하지만 <em>A8o는 폴드</em>한다. A8o가 얼핏 세 보여도, 플랍에서 애매한 상황에 자주 빠진다. 반대로 56s는 스트레이트나 플러쉬로 크게 발전할 여지가 있어 다루기 좋다. 오픈 차트는 이렇게 <strong>post-flop playability가 좋은 핸드</strong>를 선호한다.</p>
-      </div>
-
-      <p>아래는 UTG 오픈 레인지 예시다. 초록이 오픈, 회색이 폴드. 굵게 표시한 두 칸을 보자. <em>56s(65s)</em>는 오픈, <em>A8o</em>는 폴드다.</p>
-
-      <div class="grid-wrap">
-        <table class="rg" id="range-grid" aria-label="UTG 오픈 레인지 예시 그리드"></table>
-      </div>
-      <div class="legend">
-        <span><i class="sw" style="background:var(--raise-bg)"></i>오픈</span>
-        <span><i class="sw" style="background:#efeee6"></i>폴드</span>
-        <span><i class="sw" style="background:#3f8f63"></i>56s (오픈)</span>
-        <span><i class="sw" style="background:#b0492f"></i>A8o (폴드)</span>
-      </div>
-      <p class="cap">참고용 예시 그리드. 정확한 solver 빈도는 GTOWizard(8-max, 100bb 무료 프리플랍 차트)로 대조하자. 대각선=페어, 위쪽=수딧, 아래쪽=오프수딧.</p>
-    </section>
-
-    <!-- 3 -->
-    <section class="ch" id="c3">
-      <div class="ch-head"><span class="ch-num">3</span><h2>오픈? 한번 더! 3-bet</h2></div>
-      <p>이번엔 앞에서 누가 이미 오픈한 상황이다. 내 선택지는 둘이다.</p>
-      <div class="terms">
-        <div class="t-label">용어</div>
-        <dl>
-          <dt>플랫 (Flat)</dt><dd>그 레이즈 금액을 그냥 콜하고 따라 들어가는 것.</dd>
-          <dt>3-bet</dt><dd>다시 레이즈로 되받아치는 것. (블라인드 1벳, 오픈 2벳, 그걸 올리니 3벳.)</dd>
-        </dl>
-      </div>
-      <p>3벳 레인지는 <strong>두 종류의 목적</strong>으로 나뉜다. 이 구분이 3벳의 전부다.</p>
-      <div class="callout good">
-        <div class="c-tag">밸류 3벳</div>
-        <p>매우 강한 핸드로, <strong>팟을 키우려고</strong> 하는 레이즈. AA, KK, QQ, AK 같은 핸드. "너 콜해, 나 돈 더 벌게."</p>
-      </div>
-      <div class="callout warn">
-        <div class="c-tag">블러프 3벳</div>
-        <p>약한 핸드로, <strong>상대를 폴드시키려고</strong> 하는 레이즈. 아무 약한 핸드나 쓰는 게 아니라, 두 조건 중 하나 이상을 만족하는 핸드를 고른다.</p>
-      </div>
-      <p>블러프 3벳 후보를 고르는 두 조건은 이렇다.</p>
-      <p><strong>① 좋은 블락커가 있다.</strong> 내가 특정 카드를 들고 있으면, 상대가 그 카드가 포함된 강한 핸드를 가질 확률이 줄어든다. 예로 <em>KJ</em>는 상대의 AK, KK, JJ를 블락한다. 즉 상대가 되받아칠 최상위 핸드의 수를 내가 깎아먹고 있는 것이다.</p>
-      <p><strong>② 발전 가능성이 있다.</strong> 지금은 약해도 스트레이트나 플러쉬로 크게 자랄 수 있는 핸드. 예로 <em>56s</em>가 여기 해당한다.</p>
-      <p>그럼 <em>A5s</em>는? AA와 AK을 블락하면서(①) 동시에 스트레이트와 플러쉬도 만들 수 있다(②). 두 조건을 모두 만족하니, 아주 매력적인 블러프 3벳 후보가 된다.</p>
-      <div class="callout gold">
-        <div class="c-tag">이 모양의 이름</div>
-        <p>이렇게 "아주 강한 핸드 + 발전형 약한 핸드"로 양극단에 몰린 레인지를 <em>폴라라이즈(polarize)</em>되었다고 부른다. 이름보다 중요한 건 밸류와 블러프라는 두 목적이다.</p>
-      </div>
-    </section>
-
-    <!-- 4 -->
-    <section class="ch" id="c4">
-      <div class="ch-head"><span class="ch-num">4</span><h2>어쩌다 올인까지</h2></div>
-      <p>3벳까지 왔는데 상대가 물러나지 않으면?</p>
-      <div class="terms">
-        <div class="t-label">용어</div>
-        <dl>
-          <dt>4-bet · 5-bet</dt><dd>3벳을 다시 올리면 4벳, 그걸 또 올리면 5벳. 이쯤이면 사실상 올인인 경우가 많다.</dd>
-          <dt>셔브 (Shove)</dt><dd>올인을 뜻하는 여러 표현 중 하나. "다 밀어넣는다."</dd>
-          <dt>에퀴티 (Equity)</dt><dd>지금 상황에서 내가 이길 확률(승률). 3장의 "발전형 핸드"가 사실 이것이었다.</dd>
-        </dl>
-      </div>
-      <p>4벳, 5벳도 밸류와 블러프로 나뉜다. 그리고 3장에서 미뤄둔 <em>에퀴티</em>가 여기서 이름을 얻는다. "지금은 약해도 이길 가능성이 살아있는 핸드"가 바로 에퀴티가 있는 핸드였다.</p>
-      <p>에퀴티는 프리플랍에서만 중요한 게 아니다. <strong>포스트플랍에서도 매번 내 에퀴티를 판단해야 한다.</strong> 특히 아직 완성되지 않은 드로우(draw)의 에퀴티를 아는 게 중요하다. 각 스트리트에서 내 <em>아웃츠(outs, 나를 이기게 해줄 남은 카드)</em>의 개수로 대략의 에퀴티를 가늠할 수 있다.</p>
-      <table class="dtable">
-        <thead><tr><th>대표 드로우</th><th>아웃츠</th><th class="num">플랍→리버(2장)</th><th class="num">한 장당(1장)</th></tr></thead>
-        <tbody>
-          <tr><td>플러쉬 드로우 (FD)</td><td>9</td><td class="num">약 35%</td><td class="num">약 18%</td></tr>
-          <tr><td>오픈엔드 스트레이트 (OESD)</td><td>8</td><td class="num">약 31%</td><td class="num">약 16%</td></tr>
-          <tr><td>것샷 (Gutshot)</td><td>4</td><td class="num">약 16%</td><td class="num">약 8%</td></tr>
-        </tbody>
-      </table>
-      <p class="lead">간단한 어림셈: 남은 카드가 두 장이면 아웃츠×4, 한 장이면 아웃츠×2가 대략의 에퀴티(%)다. 이 감각이 6장의 콜 판단에 바로 쓰인다.</p>
-      <div class="imgslot">여기에 올인 상황별 대표 승률표(예: AA vs KK, 페어 vs 오버카드 동전던지기 등)를 넣기 · <code>images/allin-equity.png</code></div>
-    </section>
-
-    <!-- 5 -->
-    <section class="ch" id="c5">
-      <div class="ch-head"><span class="ch-num">5</span><h2>차가운 액션? 콜드콜</h2></div>
-      <div class="terms">
-        <div class="t-label">용어</div>
-        <dl>
-          <dt>콜드콜 (Cold call)</dt><dd>이미 레이즈가 오간 판에, 나는 한 푼도 안 넣은 상태에서 그 큰 금액을 처음으로 콜하는 것. 차갑게 식은 돈을 갑자기 콜한다고 콜드콜.</dd>
-          <dt>3벳 콜드콜 · 4벳 콜드콜</dt><dd>각각 3벳, 4벳까지 간 판에 처음 들어가며 콜하는 것.</dd>
-        </dl>
-      </div>
-      <p>콜드콜은 대체로 안 좋다. 이유가 셋이다.</p>
-      <p><strong>① 카드가 뻔해진다.</strong> 정말 최상위였다면 나도 되받아 올렸을 것이다. 콜만 한다는 건 "나는 아주 강하지는 않다"고 광고하는 셈이다.</p>
-      <p><strong>② 포지션이 불리한 경우가 많다.</strong> 콜하고 들어가면 앞선 레이저가 계속 주도권을 쥐고 나를 압박한다.</p>
-      <p><strong>③ 뒤에서 얻어맞는다.</strong> 내가 어정쩡하게 콜드콜로 들어가면, 아직 액션 안 한 뒷사람이 크게 레이즈해서 둘 다 쫓아낼 수 있다(스퀴즈).</p>
-      <p>그래서 콜드콜은 특정한 이유가 있을 때만 쓰고, 기본은 "되받거나, 아니면 접거나"를 먼저 떠올리자.</p>
-    </section>
-
-    <!-- 6 -->
-    <section class="ch" id="c6">
-      <div class="ch-head"><span class="ch-num">6</span><h2>콜 해야 되나 말아야 되나</h2></div>
-      <p>여기서부터는 콜을 할지 말지 <strong>계산으로 판단하는 법</strong>이다. 프리플랍이든 포스트플랍이든 다 쓰이는, 두 세계를 잇는 다리다.</p>
-      <div class="terms">
-        <div class="t-label">용어</div>
-        <dl>
-          <dt>팟오즈 (Pot odds)</dt><dd>콜에 넣어야 하는 돈 대비, 이겼을 때 가져갈 팟의 비율. 콜에 필요한 최소 승률로 바꿔 쓴다.</dd>
-        </dl>
-      </div>
-      <p>예를 들어보자. 팟에 100이 있고 상대가 50을 벳했다. 내가 콜하려면 50을 넣고, 이기면 100+50+50 = 200을 가져간다. 필요 승률은 <em>내 콜 ÷ 콜 후 전체 팟 = 50 ÷ 200 = 25%</em>다. 즉 내 에퀴티가 <strong>25%만 넘으면 콜이 이득</strong>이다. 4장에서 배운 드로우 에퀴티를 여기 그대로 대입하면 콜/폴드가 기계적으로 나온다.</p>
-      <div class="callout good">
-        <div class="c-tag">BB가 콜을 많이 하는 이유</div>
-        <p>빅블라인드는 이미 강제로 돈을 넣어둔 상태라, 콜에 추가로 필요한 금액이 상대적으로 적다. 이미 낸 만큼 할인을 받는 셈이라 더 싼 팟오즈로 콜할 수 있다.</p>
-      </div>
-    </section>
-
-    <!-- 7 -->
-    <section class="ch" id="c7">
-      <div class="ch-head"><span class="ch-num">7</span><h2>벳은 왜 하나요?</h2></div>
-      <p>포스트플랍에 들어왔다. 그런데 우리는 "왜 벳을 하는가"를 제대로 물은 적이 없다. 벳에는 목적이 있다. 크게 셋이다.</p>
-      <div class="terms">
-        <div class="t-label">용어</div>
-        <dl>
-          <dt>밸류벳 (Value bet)</dt><dd>나보다 나쁜 핸드가 콜하게 만들어 돈을 뜯는 벳.</dd>
-          <dt>블러프 (Bluff)</dt><dd>나보다 좋은 핸드를 접게 만드는 벳.</dd>
-          <dt>에퀴티 디나이 (Equity denial)</dt><dd>상대에게 공짜 카드를 안 주려는 벳. 역전 기회 자체를 뺏는다.</dd>
-        </dl>
-      </div>
-      <p><strong>예시로 보자.</strong> 보드가 K72 무지개, 내가 KQ를 들었다. 상대의 K약키커, 77 이하 포켓, A하이가 콜할 수 있으니 이건 <em>밸류벳</em>이다. 반대로 내가 J9 플러쉬 드로우만 있다면? 지금은 아무것도 아니지만 상대의 애매한 핸드를 접게 만들 수 있는 <em>블러프</em>다.</p>
-      <div class="callout gold">
-        <div class="c-tag">블러프에도 근거가 있다</div>
-        <p>아무 핸드로나 블러프하지 않는다. 3장의 블러프 3벳과 똑같은 논리다. <strong>에퀴티(발전 가능성)</strong>가 있거나 <strong>블락커</strong>가 좋은 핸드로 블러프한다. 위 J9는 플러쉬로 자랄 에퀴티가 있어서 좋은 블러프 후보다. 콜당해도 이길 여지가 남기 때문이다.</p>
-      </div>
-      <p>목적 없는 벳은 그냥 돈을 버리는 것이다. 벳 버튼을 누르기 전에 항상 "이 벳은 밸류인가, 블러프인가, 디나이인가"를 먼저 답하자.</p>
-    </section>
-
-    <!-- 8 -->
-    <section class="ch" id="c8">
-      <div class="ch-head"><span class="ch-num">8</span><h2>기교를 부리고 싶어요 선생님</h2></div>
-      <p>기본 목적을 알았으면, 그걸 더 교묘하게 쓰는 기술이 있다.</p>
-      <div class="terms">
-        <div class="t-label">용어</div>
-        <dl>
-          <dt>트랩 (Trap)</dt><dd>강한 핸드로 약한 척한다. 체크나 콜로 방심시켜 벳을 유도하고 크게 뜯는다.</dd>
-          <dt>체크레이즈 (Check-raise)</dt><dd>먼저 체크한 뒤, 상대가 벳하면 다시 레이즈로 되받는다.</dd>
-          <dt>블락벳 (Block bet)</dt><dd>일부러 작게 벳한다. 아래 설명을 정확히 읽자.</dd>
-        </dl>
-      </div>
-      <div class="callout warn">
-        <div class="c-tag">블락벳, 잘못 알기 쉬움</div>
-        <p>블락벳은 <strong>"밸류벳"의 일종</strong>이다. 이기고 있을 것 같지만, 체크했다가 상대의 큰 벳을 맞으면 불편해지는 상황에서, 내가 먼저 작게 벳해 <strong>상대의 큰 벳을 막고(block)</strong> 싼값에 쇼다운으로 가는 것이다. 핵심 판단: 만약 내 작은 벳에 <strong>콜하는 핸드들보다도 내가 약하다면</strong>, 블락벳이 아니라 그냥 <strong>체크</strong>해야 한다. "지고 있는데 작게 벳"은 블락벳이 아니다.</p>
-      </div>
-      <p>이 기교들은 결국 밸류냐 블러프냐라는 목적의 변형이다. 멋으로만 쓰면 독이 되니, 항상 "이걸로 뭘 얻으려는가"를 먼저 생각하자.</p>
-    </section>
-
-    <!-- 9 -->
-    <section class="ch" id="c9">
-      <div class="ch-head"><span class="ch-num">9</span><h2>베팅은 얼마나 해야 되지?</h2></div>
-      <p>벳을 하기로 했다. 그럼 얼마나?</p>
-      <div class="terms">
-        <div class="t-label">용어</div>
-        <dl>
-          <dt>퍼센트벳</dt><dd>팟 대비 비율로 말한다. 30%벳, 팟벳(팟과 같은 크기) 등.</dd>
-          <dt>오버벳 (Overbet)</dt><dd>팟보다 크게 벳하는 것.</dd>
-        </dl>
-      </div>
-      <p>크기는 기분이 아니라 <strong>내 레인지의 밸류 대 블러프 비율</strong>에서 나온다. 이걸 가장 깔끔하게 보여주는 장난감이 <em>AKQ 게임</em>이다.</p>
-      <div class="callout gold">
-        <div class="c-tag">AKQ 게임</div>
-        <p>카드가 A, K, Q 셋뿐이라고 하자. A는 항상 이기고(밸류), Q는 항상 진다(블러프 후보), K는 <strong>블러프는 이기고 밸류엔 지는</strong> 어중간한 캐처다. 벳하는 사람은 A로 밸류벳, Q로 블러프한다. 그럼 상대(K를 든 사람)는 콜해야 할까?</p>
-        <p>여기서 두 숫자가 튀어나온다. <strong>① 벳하는 쪽</strong>은 상대가 K로 콜하든 폴드하든 손해 안 보도록 밸류와 블러프 비율을 맞춘다. <strong>② 콜하는 쪽</strong>은 자기 팟오즈만큼의 승률이 나오도록 콜 빈도를 맞춘다. 벳이 커질수록 상대가 콜하기 힘든 팟오즈를 강요할 수 있어 <strong>블러프를 더 섞을 수 있고</strong>, 그래서 폴라라이즈된 레인지는 크게(오버벳까지) 벳한다.</p>
-      </div>
-      <p>실전에서 외워둘 <strong>팟벳(100%) 기준값</strong>은 이렇다.</p>
-      <table class="dtable">
-        <thead><tr><th>팟벳일 때</th><th class="num">값</th></tr></thead>
-        <tbody>
-          <tr><td>벳하는 쪽의 밸류 : 블러프 비율</td><td class="num">2 : 1 (블러프 1/3)</td></tr>
-          <tr><td>콜하는 쪽에게 필요한 승률(팟오즈)</td><td class="num">약 33%</td></tr>
-          <tr><td>콜하는 쪽의 방어 빈도(MDF)</td><td class="num">약 50%</td></tr>
-        </tbody>
-      </table>
-      <p class="lead">즉 밸류가 많으면 크게 벳해도 되고, 밸류가 어중간하게 뭉쳐 있으면 작게 벳하는 게 맞다. 사이징은 레인지 구성이 정한다.</p>
-    </section>
-
-    <!-- 10 -->
-    <section class="ch" id="c10">
-      <div class="ch-head"><span class="ch-num">10</span><h2>C발? 아니 C벳</h2></div>
-      <div class="terms">
-        <div class="t-label">용어</div>
-        <dl>
-          <dt>C벳 (Continuation bet)</dt><dd>프리플랍에서 레이즈로 주도권을 잡은 사람이 플랍에서도 이어서 하는 벳.</dd>
-          <dt>레인지 (Range)</dt><dd>이 상황에서 저 사람이 가질 수 있는 카드들 전체 묶음.</dd>
-          <dt>레인지 어드밴티지 (Range advantage)</dt><dd>특정 보드에서 누구의 레인지가 더 유리한가.</dd>
-        </dl>
-      </div>
-      <p>포커는 상대의 카드 한 장을 맞히는 게임이 아니라, 상대가 가질 수 있는 <em>레인지</em> 전체를 상상하며 싸우는 게임이다. 3장에서 "여러 핸드를 묶어 하나의 전략으로 쓴다"고 했던 게 바로 레인지적 사고였다.</p>
-      <p>C벳이 잘 먹히는지는 <strong>레인지 어드밴티지</strong>가 정한다. 예를 들어 A가 깔린 보드는 보통 프리플랍 레이저에게 유리하다. 그의 레인지에 A가 든 핸드가 더 많기 때문이다. 보드가 누구 편인지 읽고, 내 편일 때 공격하는 것이 C벳의 핵심이다.</p>
-      <div class="callout warn">
-        <div class="c-tag">동크벳은 왜 안 좋은가</div>
-        <p><strong>동크벳(Donk bet)</strong>은 프리플랍 공격자가 아닌 쪽이, 플랍에서 먼저 그 공격자에게 리드해서 벳하는 것이다. 문제는 대부분의 보드에서 레인지 어드밴티지가 <strong>공격자 쪽에</strong> 있다는 점이다. 유리하지도 않은 내가 먼저 벳하면 그냥 헌납이 되기 쉽다. 보통은 유리한 쪽(공격자)에게 체크로 넘겨 C벳을 유도하고, 내가 강하면 그때 체크레이즈하는 편이 낫다.</p>
-      </div>
-      <p class="lead">참고: 동크벳이 안 좋은 이유도 홀덤스쿨 영상에 설명이 있다.</p>
-      <div class="imgslot">여기에 레인지 어드밴티지 보드 예시 이미지를 넣기(예: A-high 보드 vs low 보드) · <code>images/range-advantage.png</code></div>
-    </section>
-
-    <!-- 11 -->
-    <section class="ch" id="c11">
-      <div class="ch-head"><span class="ch-num">11</span><h2>스스로 궁지에 몰아넣어버렸다</h2></div>
-      <p>마지막이다. 지금까지 스트리트별로 쪼개서 배웠다면, 이제 <strong>한 판을 통째로 설계하는 법</strong>을 본다.</p>
-      <div class="terms">
-        <div class="t-label">용어</div>
-        <dl>
-          <dt>SPR (Stack-to-Pot Ratio)</dt><dd>지금 남은 유효 스택 ÷ 현재 팟. 이 숫자가 작으면 스택이 얕고, 조금만 쳐도 금방 올인 각이 난다.</dd>
-        </dl>
-      </div>
-      <p>특히 SPR이 <strong>낮을 때</strong>가 중요하다. 스택이 얕으면 아무 생각 없이 치다가 리버에서 애매한 금액만 남아 이도저도 못 하는 상황에 빠진다. 스스로 궁지에 몰아넣는 것이다.</p>
-      <p>그래서 SPR이 낮으면 <strong>미리 계획한다.</strong> 예를 들어 턴부터 사이징을 키워두면, 리버에 딱 팟벳이나 셔브로 남은 돈을 자연스럽게 다 밀어넣게 판이 짜인다. 리버에서 즉흥적으로 정하는 게 아니라, 턴에서 이미 리버까지 그림을 그려두는 것이다.</p>
-      <div class="callout good">
-        <div class="c-tag">여기까지 왔다면</div>
-        <p>이걸 이해하려면 앞의 전부가 필요하다. 상대가 콜할지(6장 팟오즈·에퀴티), 얼마나 벳할지(9장 사이징), 이걸 한 판 흐름 위에 얹는 게 SPR 사고다. 이제 포커를 액션 하나하나가 아니라 <strong>한 판 전체</strong>로 보기 시작한 것이다. 축하한다.</p>
-      </div>
-    </section>
-
-  </main>
-</div>
+<section class="order">
+  <h3>추천 순서</h3>
+  <ol>
+    <li>입문 글 0~2장을 읽고 포지션과 오픈/폴드 개념을 잡는다.</li>
+    <li>오픈 훈련에서 100bb 차트부터 보고, 퀴즈로 외운다.</li>
+    <li>익숙해지면 짧은 스택(40bb 이하)과 칠하기 시험으로 넘어간다.</li>
+  </ol>
+</section>
 
 <footer>
-  <div class="fwrap">
-    <p><strong>포커스 페이스</strong> · 초보자를 위한 포커 입문 with 용어공부</p>
-    <p>작성: [이름 입력] · 참고 자료: 홀덤스쿨, GTOWizard(8-max 100bb 무료 프리플랍 차트)</p>
-    <p style="margin-top:1rem;color:#7a938a">범위 그리드는 학습용 예시이며, 정확한 GTO 빈도는 GTOWizard로 대조할 것.</p>
+  <div class="in">
+    <p><strong>포커스 페이스</strong> · 포커 동아리 신규부원용 학습 사이트</p>
   </div>
 </footer>
 
+<script src="train/ranges.js"></script>
 <script>
 (function(){
-  var ranks=["A","K","Q","J","T","9","8","7","6","5","4","3","2"];
-  // UTG 오픈 레인지 예시 (참고용)
-  var raise=new Set([
-    // pairs
-    "AA","KK","QQ","JJ","TT","99","88","77","66","55","44","33","22",
-    // suited
-    "AKs","AQs","AJs","ATs","A9s","A8s","A7s","A6s","A5s","A4s","A3s","A2s",
-    "KQs","KJs","KTs","QJs","QTs","JTs","T9s","T8s","98s","87s","76s","65s","54s",
-    // offsuit
-    "AKo","AQo","AJo","KQo"
-  ]);
-  var markRaise="65s", markFold="A8o";
-  function code(i,j){
-    var hi=ranks[i], lo=ranks[j];
-    if(i===j) return hi+lo;          // pair
-    if(i<j) return hi+lo+"s";        // suited (upper triangle)
-    return lo+hi+"o";                // offsuit (lower triangle)
-  }
-  var t=document.getElementById("range-grid");
-  if(!t) return;
-  for(var i=0;i<13;i++){
-    var tr=document.createElement("tr");
-    for(var j=0;j<13;j++){
-      var td=document.createElement("td");
-      var c=code(i,j);
-      var cls;
-      if(c===markRaise) cls="cell-mark-raise";
-      else if(c===markFold) cls="cell-mark-fold";
-      else cls=raise.has(c)?"cell-raise":"cell-fold";
-      td.className=cls;
-      var s=document.createElement("span");
-      s.textContent=c;
-      td.appendChild(s);
-      tr.appendChild(td);
-    }
-    t.appendChild(tr);
+  var el=document.getElementById("mini"), R=window.RANGES;
+  if(!el||!R) return;
+  var ranks="AKQJT98765432", spot=R.spots["100"]["CO"];
+  for(var i=0;i<13;i++)for(var j=0;j<13;j++){
+    var h=i===j?ranks[i]+ranks[j]:i<j?ranks[i]+ranks[j]+"s":ranks[j]+ranks[i]+"o";
+    var v=spot[h], c=document.createElement("i");
+    if(v) c.className=typeof v==="string"?v:(v.A>=v.R?"A":"R");
+    el.appendChild(c);
   }
 })();
 </script>

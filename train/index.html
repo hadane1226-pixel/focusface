@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>오픈 훈련 · 포커스 페이스</title>
+<link rel="preconnect" href="https://cdn.jsdelivr.net">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+<link rel="stylesheet" href="../assets/site.css">
+<style>
+  .head{max-width:64rem;margin:0 auto;padding:2.2rem 1.2rem 0}
+  .head h1{font-size:clamp(1.8rem,5vw,2.6rem);font-weight:800;letter-spacing:-0.035em;line-height:1.15;margin:0 0 .4rem}
+  .head p{margin:0;color:var(--muted)}
+  .notice{margin-top:1rem;background:#f6efd9;border:1px solid #e5d19b;border-radius:12px;padding:.75rem 1rem;font-size:.88rem;color:#6d5a2c}
+  .notice b{color:#8a6a1f}
+
+  .modes{max-width:64rem;margin:1.6rem auto 0;padding:0 1.2rem;display:flex;gap:.3rem;border-bottom:1px solid var(--line);overflow-x:auto}
+  .modes button{background:none;border:0;border-bottom:2px solid transparent;padding:.7rem .9rem;font-weight:600;color:var(--muted);cursor:pointer;white-space:nowrap;margin-bottom:-1px}
+  .modes button[aria-selected="true"]{color:var(--felt);border-bottom-color:var(--felt)}
+
+  .panel{max-width:64rem;margin:0 auto;padding:1.6rem 1.2rem 0}
+  .panel[hidden]{display:none}
+
+  .filters{display:grid;gap:.7rem;margin-bottom:1.3rem}
+  .frow{display:flex;flex-wrap:wrap;align-items:center;gap:.35rem}
+  .frow .lab{font-size:.75rem;font-weight:700;color:var(--muted);letter-spacing:.04em;width:3.4rem;flex:none}
+  .chip{border:1px solid var(--line);background:var(--card);border-radius:999px;padding:.2rem .7rem;font-size:.84rem;cursor:pointer;font-family:var(--mono);color:var(--muted)}
+  .chip[aria-pressed="true"]{background:var(--felt);border-color:var(--felt);color:#fff}
+  .chip.txt{font-family:var(--sans)}
+  .chip:disabled{opacity:.4;cursor:default}
+
+  .two{display:grid;gap:1.4rem}
+  @media (min-width:900px){.two{grid-template-columns:minmax(0,1fr) minmax(0,1fr);align-items:start}}
+  .box{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:1.3rem}
+
+  /* quiz */
+  .spotline{display:flex;align-items:baseline;gap:.6rem;flex-wrap:wrap}
+  .spotline .stk{font-family:var(--mono);font-weight:700;font-size:1.5rem;color:var(--felt)}
+  .spotline .pos{font-weight:800;font-size:1.5rem;letter-spacing:-0.02em}
+  .spotline .sub{color:var(--muted);font-size:.88rem}
+  .seats{display:grid;grid-template-columns:repeat(8,1fr);gap:.25rem;margin:.9rem 0 1.2rem}
+  .seat{font-family:var(--mono);font-size:clamp(.55rem,1.6vw,.7rem);text-align:center;padding:.3rem 0;border-radius:6px;background:var(--paper-2);color:var(--muted);border:1px solid var(--line)}
+  .seat.folded{opacity:.45;text-decoration:line-through}
+  .seat.me{background:var(--felt);color:#fff;border-color:var(--felt);font-weight:700}
+  .cards{display:flex;gap:.7rem;justify-content:center;margin:.4rem 0 1.4rem}
+  .pc{width:clamp(4.2rem,16vw,5.4rem);aspect-ratio:5/7;background:#fff;border:1px solid #cfccbf;border-radius:10px;box-shadow:0 2px 6px rgba(0,0,0,.08);display:flex;flex-direction:column;align-items:center;justify-content:center;font-weight:800;line-height:1}
+  .pc .r{font-size:clamp(1.7rem,6vw,2.3rem);letter-spacing:-0.04em}
+  .pc .s{font-size:clamp(1.2rem,4.5vw,1.6rem);margin-top:.2rem}
+  .pc.red{color:#b8352a}
+  .pc.blk{color:#1c1e1b}
+  .acts{display:grid;grid-template-columns:repeat(auto-fit,minmax(6rem,1fr));gap:.5rem}
+  .act{border:0;border-radius:12px;padding:.85rem .5rem;font-weight:700;font-size:1rem;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:.1rem}
+  .act small{font-family:var(--mono);font-size:.68rem;font-weight:500;opacity:.7}
+  .act.F{background:var(--fold-cell);color:#55584f}
+  .act.R{background:var(--raise);color:#fff}
+  .act.A{background:var(--allin);color:#1f1a0c}
+  .act:disabled{opacity:.35;cursor:default}
+  .act[hidden]{display:none}
+  .act.picked{outline:3px solid var(--text);outline-offset:2px}
+  .fb{margin-top:1rem;border-radius:12px;padding:.8rem 1rem;font-size:.95rem;display:none}
+  .fb.show{display:block}
+  .fb.good{background:var(--raise-bg);border:1px solid #b6d5bf}
+  .fb.bad{background:var(--fold-bg);border:1px solid #e2b6a6}
+  .fb b{font-size:1.05rem}
+  .next{margin-top:.8rem;width:100%;border:1px solid var(--felt);background:var(--card);color:var(--felt);border-radius:12px;padding:.7rem;font-weight:700;cursor:pointer;display:none}
+  .next.show{display:block}
+  .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:.5rem;margin-bottom:1rem}
+  .stat{background:var(--paper-2);border-radius:10px;padding:.6rem .7rem}
+  .stat .v{font-family:var(--mono);font-weight:700;font-size:1.25rem}
+  .stat .k{font-size:.72rem;color:var(--muted)}
+  .h3{font-size:.8rem;font-weight:700;color:var(--muted);letter-spacing:.04em;margin:0 0 .6rem}
+  .misses{display:flex;flex-wrap:wrap;gap:.35rem;min-height:1.6rem}
+  .miss{font-family:var(--mono);font-size:.78rem;border:1px solid #e2b6a6;background:var(--fold-bg);border-radius:6px;padding:.1rem .45rem;cursor:pointer}
+  .empty{color:var(--muted);font-size:.85rem}
+  .linkbtn{background:none;border:0;padding:0;color:var(--muted);font-size:.8rem;text-decoration:underline;cursor:pointer}
+  .chartcap{font-size:.85rem;color:var(--muted);margin:0 0 .6rem;text-align:center}
+
+  /* chart */
+  .summary{display:flex;gap:1rem;flex-wrap:wrap;justify-content:center;font-size:.85rem;color:var(--muted);margin-top:.6rem}
+  .summary b{font-family:var(--mono);color:var(--text)}
+  .tools{display:flex;flex-wrap:wrap;gap:.4rem;align-items:center;margin-top:1rem}
+  .btn{border:1px solid var(--line);background:var(--card);border-radius:10px;padding:.45rem .85rem;font-size:.86rem;font-weight:600;cursor:pointer}
+  .btn.pri{background:var(--felt);border-color:var(--felt);color:#fff}
+  .btn[aria-pressed="true"]{background:var(--text);border-color:var(--text);color:#fff}
+  .edithelp{font-size:.82rem;color:var(--muted);margin:.8rem 0 0}
+  .edited{font-size:.72rem;font-weight:700;color:#8a6a1f;background:#f6efd9;border:1px solid #e5d19b;border-radius:999px;padding:.05rem .5rem;margin-left:.4rem;vertical-align:middle}
+
+  /* paint */
+  .score{font-family:var(--mono);font-size:2rem;font-weight:800;color:var(--felt)}
+  .gridbox{max-width:34rem;margin:0 auto}
+</style>
+</head>
+<body>
+
+<nav class="topbar">
+  <div class="in">
+    <a class="brand" href="../"><span class="pip"></span>FOCUS FACE</a>
+    <div class="topnav">
+      <a href="../">홈</a>
+      <a href="../intro/">포커 입문</a>
+      <a href="./" aria-current="page">오픈 훈련</a>
+    </div>
+  </div>
+</nav>
+
+<header class="head">
+  <h1>오픈 훈련하기</h1>
+  <p>앞사람이 모두 폴드한 상황(RFI)에서, 내 자리와 스택으로 이 핸드를 오픈할까? 8-max 기준.</p>
+  <div class="notice" id="notice" hidden></div>
+</header>
+
+<div class="modes" role="tablist">
+  <button role="tab" data-mode="quiz" aria-selected="true">핸드 퀴즈</button>
+  <button role="tab" data-mode="chart" aria-selected="false">차트 보기</button>
+  <button role="tab" data-mode="paint" aria-selected="false">칠하기 시험</button>
+</div>
+
+<!-- QUIZ -->
+<section class="panel" id="p-quiz" role="tabpanel">
+  <div class="filters">
+    <div class="frow"><span class="lab">스택</span><span id="q-stacks" class="frow"></span></div>
+    <div class="frow"><span class="lab">포지션</span><span id="q-pos" class="frow"></span></div>
+    <div class="frow"><span class="lab">출제</span>
+      <button class="chip txt" id="q-border" aria-pressed="true">경계 핸드 위주</button>
+    </div>
+  </div>
+  <div class="two">
+    <div class="box">
+      <div class="spotline"><span class="stk" id="q-stk"></span><span class="pos" id="q-posname"></span><span class="sub">앞에서 모두 폴드</span></div>
+      <div class="seats" id="q-seats"></div>
+      <div class="cards" id="q-cards"></div>
+      <div class="acts" id="q-acts">
+        <button class="act F" data-a="F">폴드<small>F</small></button>
+        <button class="act R" data-a="R">레이즈<small>R</small></button>
+        <button class="act A" data-a="A">올인<small>A</small></button>
+      </div>
+      <div class="fb" id="q-fb"></div>
+      <button class="next" id="q-next">다음 핸드 (Enter)</button>
+    </div>
+    <div class="box">
+      <div class="stats">
+        <div class="stat"><div class="v" id="s-acc">-</div><div class="k">정답률</div></div>
+        <div class="stat"><div class="v" id="s-streak">0</div><div class="k">연속 정답</div></div>
+        <div class="stat"><div class="v" id="s-best">0</div><div class="k">최고 연속</div></div>
+      </div>
+      <div id="q-chartwrap" hidden>
+        <p class="chartcap" id="q-chartcap"></p>
+        <table class="rg" id="q-grid"></table>
+        <div class="legend">
+          <span><i class="sw" style="background:var(--raise-bg)"></i>레이즈</span>
+          <span><i class="sw" style="background:var(--allin-bg)"></i>올인</span>
+          <span><i class="sw" style="background:var(--fold-cell)"></i>폴드</span>
+        </div>
+      </div>
+      <div style="margin-top:1.2rem">
+        <p class="h3">최근 틀린 핸드</p>
+        <div class="misses" id="q-misses"></div>
+        <p style="margin:.8rem 0 0"><button class="linkbtn" id="q-reset">기록 초기화</button></p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CHART -->
+<section class="panel" id="p-chart" role="tabpanel" hidden>
+  <div class="filters">
+    <div class="frow"><span class="lab">스택</span><span id="c-stacks" class="frow"></span></div>
+    <div class="frow"><span class="lab">포지션</span><span id="c-pos" class="frow"></span></div>
+  </div>
+  <div class="gridbox">
+    <p class="chartcap" id="c-cap"></p>
+    <table class="rg" id="c-grid"></table>
+    <div class="legend">
+      <span><i class="sw" style="background:var(--raise-bg)"></i>레이즈</span>
+      <span><i class="sw" style="background:var(--allin-bg)"></i>올인</span>
+      <span><i class="sw" style="background:var(--fold-cell)"></i>폴드</span>
+    </div>
+    <div class="summary" id="c-sum"></div>
+    <div class="tools">
+      <button class="btn" id="c-edit" aria-pressed="false">편집</button>
+      <span id="c-brushes" hidden>
+        <button class="chip txt" data-brush="R" aria-pressed="true">레이즈</button>
+        <button class="chip txt" data-brush="A" aria-pressed="false">올인</button>
+        <button class="chip txt" data-brush="F" aria-pressed="false">폴드</button>
+      </span>
+      <span style="flex:1"></span>
+      <button class="btn" id="c-revert">이 차트 원래대로</button>
+      <button class="btn pri" id="c-export">ranges.js 내보내기</button>
+    </div>
+    <p class="edithelp">편집을 켜고 칸을 누르거나 드래그해서 칠한다. 수정은 이 브라우저에만 저장되고, 모두에게 반영하려면 내보낸 <code>ranges.js</code>로 저장소의 <code>train/ranges.js</code>를 교체하면 된다.</p>
+  </div>
+</section>
+
+<!-- PAINT -->
+<section class="panel" id="p-paint" role="tabpanel" hidden>
+  <div class="filters">
+    <div class="frow"><span class="lab">스택</span><span id="t-stacks" class="frow"></span></div>
+    <div class="frow"><span class="lab">포지션</span><span id="t-pos" class="frow"></span></div>
+    <div class="frow"><span class="lab"></span><button class="chip txt" id="t-random">랜덤 스팟</button></div>
+  </div>
+  <div class="two">
+    <div class="gridbox" style="width:100%">
+      <p class="chartcap" id="t-cap"></p>
+      <table class="rg" id="t-grid"></table>
+      <div class="legend" id="t-legend">
+        <span><i class="sw" style="background:var(--raise-bg)"></i>오픈(레이즈/올인)으로 칠함</span>
+        <span><i class="sw" style="background:var(--fold-cell)"></i>폴드</span>
+      </div>
+    </div>
+    <div class="box">
+      <p class="h3">방법</p>
+      <p style="margin:0 0 1rem;font-size:.92rem;color:var(--muted)">이 스팟에서 오픈하는 핸드를 전부 칠한 뒤 채점한다. 누르거나 드래그해서 칠하고, 칠한 칸을 다시 누르면 지워진다.</p>
+      <div class="tools" style="margin:0 0 1rem">
+        <button class="btn pri" id="t-grade">채점</button>
+        <button class="btn" id="t-clear">지우기</button>
+      </div>
+      <div id="t-result" hidden>
+        <div class="score" id="t-score"></div>
+        <p style="margin:.2rem 0 .8rem;font-size:.9rem;color:var(--muted)" id="t-detail"></p>
+        <div class="legend" style="justify-content:flex-start">
+          <span><i class="sw" style="background:var(--raise-bg)"></i>맞음</span>
+          <span><i class="sw" style="background:var(--fold-bg)"></i>놓침</span>
+          <span><i class="sw" style="background:var(--fold)"></i>잘못 칠함</span>
+        </div>
+      </div>
+      <p class="h3" style="margin-top:1.2rem">이 스팟 최고 점수</p>
+      <p style="margin:0;font-family:var(--mono)" id="t-best">-</p>
+    </div>
+  </div>
+</section>
+
+<div style="height:4rem"></div>
+
+<script src="ranges.js"></script>
+<script src="train.js"></script>
+</body>
+</html>
