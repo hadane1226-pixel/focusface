@@ -3,7 +3,9 @@
 
   var RANKS = "AKQJT98765432";
   var SEATS = ["UTG", "UTG+1", "LJ", "HJ", "CO", "BTN", "SB", "BB"];
-  var NAMES = { F: "폴드", MF: "주로 폴드", MO: "주로 오픈", R: "오픈", A: "올인", L: "림프" };
+  var NAMES = { F: "폴드", MF: "주로 폴드", MO: "주로 오픈", R: "오픈", A: "올인", L: "콜" };
+  // 퀴즈 답: 폴드 · 콜(SB 림프) · 오픈(레이즈) · 올인
+  var ACTS = [["F", "F", "폴드"], ["C", "L", "콜"], ["R", "R", "오픈"], ["A", "A", "올인"]];
   var $ = function (id) { return document.getElementById(id); };
 
   // ---------- storage ----------
@@ -74,7 +76,7 @@
     var o = openFreq(f);
     td.title = td.dataset.h + " · 오픈 " + Math.round(o * 100) + "%" +
       (f.A > 0.001 && f.R > 0.001 ? " (레이즈 " + Math.round(f.R * 100) + "% · 올인 " + Math.round(f.A * 100) + "%)" : "") +
-      (f.L > 0.001 ? " · 림프 " + Math.round(f.L * 100) + "%" : "");
+      (f.L > 0.001 ? " · 콜 " + Math.round(f.L * 100) + "%" : "");
   }
 
   // ---------- grid ----------
@@ -320,13 +322,9 @@
       d.innerHTML = '<span class="r">' + (c[0] === "T" ? "10" : c[0]) + '</span><span class="s">' + SUIT[c[1]] + "</span>";
       cards.appendChild(d);
     });
-    var allinOk = stack <= 25 || cur.f.A > 0;
-    var spotHasLimp = HANDS.some(function (x) { return freqs(spot, x).L > 0; });
     document.querySelectorAll("#q-acts .act").forEach(function (b) {
       b.disabled = false;
       b.classList.remove("picked");
-      if (b.dataset.a === "A") b.hidden = !allinOk;
-      if (b.dataset.a === "L") b.hidden = !spotHasLimp;
     });
     $("q-fb").className = "fb";
     $("q-next").className = "next";
@@ -340,8 +338,10 @@
     var btn = document.querySelector('#q-acts .act[data-a="' + a + '"]');
     if (!btn || btn.hidden) return;
     answered = true;
-    var f = cur.f, best = category(f);
-    var ok = a === best;
+    // 가장 자주 하는 액션이 정답이고, 섞어 쓰는 핸드는 30% 이상 쓰는 액션도 정답
+    var f = cur.f, fr = {}, best = "F";
+    ACTS.forEach(function (x) { fr[x[0]] = f[x[1]]; if (fr[x[0]] > fr[best]) best = x[0]; });
+    var ok = a === best || fr[a] >= 0.3;
     st.n++;
     if (ok) { st.ok++; st.streak++; st.best = Math.max(st.best, st.streak); }
     else {
@@ -356,9 +356,10 @@
     btn.classList.add("picked");
     btn.disabled = false;
 
-    var ans = NAMES[best] + " <span style='font-weight:400'>(오픈 " + pct(openFreq(f)) +
-      (f.A > 0.001 && f.R > 0.001 ? ", 레이즈 " + pct(f.R) + " · 올인 " + pct(f.A) : f.A > 0.001 ? ", 올인" : "") +
-      (f.L > 0.001 ? ", 림프 " + pct(f.L) : "") + ")</span>";
+    var used = ACTS.filter(function (x) { return fr[x[0]] > 0.001; })
+      .sort(function (x, y) { return fr[y[0]] - fr[x[0]]; });
+    var ans = used.length === 1 ? used[0][2]
+      : used.map(function (x) { return x[2] + " " + pct(fr[x[0]]); }).join(" · ");
     var fb = $("q-fb");
     fb.className = "fb show " + (ok ? "good" : "bad");
     fb.innerHTML = (ok ? "<b>정답</b> · " : "<b>오답</b> · ") + cur.pos + " " + cur.stack + "bb에서 " +
@@ -399,7 +400,7 @@
   document.addEventListener("keydown", function (e) {
     if ($("p-quiz").hidden || e.metaKey || e.ctrlKey || e.altKey) return;
     if (e.target.closest && e.target.closest("input,textarea")) return;
-    var keymap = { "1": "F", "f": "F", "2": "MF", "3": "MO", "4": "R", "r": "R", "a": "A", "5": "A", "l": "L", "6": "L" };
+    var keymap = { "1": "F", "f": "F", "2": "C", "c": "C", "3": "R", "r": "R", "4": "A", "a": "A" };
     var a = keymap[e.key.toLowerCase()];
     if (!answered && a) { e.preventDefault(); answer(a); }
     else if (answered && (e.key === "Enter" || e.key === " ")) { e.preventDefault(); newQuestion(); }
@@ -426,7 +427,7 @@
     $("c-sum").innerHTML = "레이즈 <b>" + s.R.toFixed(1) + "%</b>" +
       (s.A > 0 ? " · 올인 <b>" + s.A.toFixed(1) + "%</b>" : "") +
       " · 전체 오픈 <b>" + s.total.toFixed(1) + "%</b>" +
-      (s.L > 0 ? " · 림프 <b>" + s.L.toFixed(1) + "%</b>" : "");
+      (s.L > 0 ? " · 콜(림프) <b>" + s.L.toFixed(1) + "%</b>" : "");
   }
 
   // =========================================================

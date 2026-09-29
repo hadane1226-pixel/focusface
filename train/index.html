@@ -52,15 +52,12 @@
   .pc.red{color:#b8352a}
   .pc.blk{color:#1c1e1b}
   .acts{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:.4rem}
-  .act.A,.act.L{grid-column:span 2}
   .act{border:0;border-radius:12px;padding:.8rem .2rem;font-weight:700;font-size:clamp(.82rem,3.4vw,.95rem);white-space:nowrap;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:.1rem}
   .act small{font-family:var(--mono);font-size:.68rem;font-weight:500;opacity:.7}
   .act.F{background:var(--fold-cell);color:#55584f}
-  .act.MF{background:var(--c-mfold);color:#6b3a28}
-  .act.MO{background:var(--c-mopen);color:#1f4a31}
   .act.R{background:var(--raise);color:#fff}
   .act.A{background:var(--allin);color:#1f1a0c}
-  .act.L{background:var(--c-limp);color:#1c3f5a}
+  .act.C{background:var(--c-limp);color:#1c3f5a}
   .act:disabled{opacity:.35;cursor:default}
   .act[hidden]{display:none}
   .act.picked{outline:3px solid var(--text);outline-offset:2px}
@@ -136,12 +133,10 @@
       <div class="seats" id="q-seats"></div>
       <div class="cards" id="q-cards"></div>
       <div class="acts" id="q-acts">
-        <button class="act F" data-a="F">폴드<small>1 · 0%</small></button>
-        <button class="act MF" data-a="MF">주로 폴드<small>2 · 1~49%</small></button>
-        <button class="act MO" data-a="MO">주로 오픈<small>3 · 50~99%</small></button>
-        <button class="act R" data-a="R">오픈<small>4 · 100%</small></button>
-        <button class="act A" data-a="A">올인<small>5 · A</small></button>
-        <button class="act L" data-a="L">림프<small>6 · L</small></button>
+        <button class="act F" data-a="F">폴드<small>1 · F</small></button>
+        <button class="act C" data-a="C">콜<small>2 · C</small></button>
+        <button class="act R" data-a="R">오픈<small>3 · R</small></button>
+        <button class="act A" data-a="A">올인<small>4 · A</small></button>
       </div>
       <div class="fb" id="q-fb"></div>
       <button class="next" id="q-next">다음 핸드 (Enter)</button>
@@ -161,7 +156,7 @@
           <span><i class="sw" style="background:var(--c-mfold)"></i>주로 폴드</span>
           <span><i class="sw" style="background:var(--fold-cell)"></i>폴드</span>
           <span><i class="sw" style="background:var(--allin-bg)"></i>올인</span>
-          <span><i class="sw" style="background:var(--c-limp)"></i>림프</span>
+          <span><i class="sw" style="background:var(--c-limp)"></i>콜(림프)</span>
         </div>
       </div>
       <div style="margin-top:1.2rem">
@@ -188,7 +183,7 @@
       <span><i class="sw" style="background:var(--c-mfold)"></i>주로 폴드</span>
       <span><i class="sw" style="background:var(--fold-cell)"></i>폴드</span>
       <span><i class="sw" style="background:var(--allin-bg)"></i>올인</span>
-          <span><i class="sw" style="background:var(--c-limp)"></i>림프</span>
+          <span><i class="sw" style="background:var(--c-limp)"></i>콜(림프)</span>
     </div>
     <div class="summary" id="c-sum"></div>
     <div class="tools">
