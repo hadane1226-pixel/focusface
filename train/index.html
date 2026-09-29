@@ -90,7 +90,6 @@
   .btn.pri{background:var(--felt);border-color:var(--felt);color:#fff}
   .btn[aria-pressed="true"]{background:var(--text);border-color:var(--text);color:#fff}
   .edithelp{font-size:.82rem;color:var(--muted);margin:.8rem 0 0}
-  .edited{font-size:.72rem;font-weight:700;color:#8a6a1f;background:#f6efd9;border:1px solid #e5d19b;border-radius:999px;padding:.05rem .5rem;margin-left:.4rem;vertical-align:middle}
 
   /* paint */
   .score{font-family:var(--mono);font-size:2rem;font-weight:800;color:var(--felt)}
@@ -193,22 +192,11 @@
     </div>
     <div class="summary" id="c-sum"></div>
     <div class="tools">
-      <button class="btn" id="c-edit" aria-pressed="false">편집</button>
-      <span id="c-brushes" hidden>
-        <button class="chip txt" data-brush="R" aria-pressed="true">오픈</button>
-        <button class="chip txt" data-brush="MO" aria-pressed="false">주로 오픈</button>
-        <button class="chip txt" data-brush="MF" aria-pressed="false">주로 폴드</button>
-        <button class="chip txt" data-brush="F" aria-pressed="false">폴드</button>
-        <button class="chip txt" data-brush="A" aria-pressed="false">올인</button>
-        <button class="chip txt" data-brush="L" aria-pressed="false">림프</button>
-      </span>
       <span style="flex:1"></span>
-      <button class="btn" id="c-revert">이 차트 원래대로</button>
       <label class="btn" for="c-import-file" tabindex="0">ranges.js 불러오기</label>
       <input type="file" id="c-import-file" accept=".js,.json,text/javascript,application/json" hidden>
-      <button class="btn pri" id="c-export">ranges.js 내보내기</button>
     </div>
-    <p class="edithelp">편집을 켜고 칸을 누르거나 드래그해서 칠한다. 수정은 이 브라우저에만 저장되고, 모두에게 반영하려면 내보낸 <code>ranges.js</code>로 저장소의 <code>train/ranges.js</code>를 교체하면 된다. <b>불러오기</b>는 가지고 있는 <code>ranges.js</code>를 이 브라우저에서만 쓰게 한다.</p>
+    <p class="edithelp">가지고 있는 <code>ranges.js</code> 파일을 불러오면 이 브라우저에서만 그 레인지로 퀴즈·차트·칠하기 시험을 한다.</p>
   </div>
 </section>
 

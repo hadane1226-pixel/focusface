@@ -6,7 +6,7 @@ GitHub Pages로 무료 배포하는 정적 사이트다. 빌드 과정 없이 pu
 - `index.html` : 메인 화면. 각 탭을 소개하고 이동한다.
 - `intro/index.html` : 탭 1, 초보자를 위한 포커 입문 블로그
 - `train/` : 탭 2, 오픈 훈련하기
-  - `index.html`, `train.js` : 핸드 퀴즈 · 차트 보기/편집 · 칠하기 시험
+  - `index.html`, `train.js` : 핸드 퀴즈 · 차트 보기 · 칠하기 시험
   - `ranges.js` : 오픈 레인지 데이터 (스택 100/80/60/50/40/30/25/20/15bb × 포지션 UTG~SB)
 - `assets/site.css` : 메인·훈련 페이지 공통 스타일
 - `tools/gen-ranges.mjs` : 학습용 근사 레인지 생성기
@@ -15,10 +15,7 @@ GitHub Pages로 무료 배포하는 정적 사이트다. 빌드 과정 없이 pu
   - `range-advantage.png` (입문 10장 보드 예시)
 
 ## 오픈 레인지 데이터
-현재 `train/ranges.js`는 **학습용 근사치**다 (solver 결과 아님). 실제 차트로 바꾸는 방법:
-1. 오픈 훈련 → **차트 보기**에서 스택·포지션을 고르고 **편집**을 켠다.
-2. 보고 있는 차트(GTOWizard 등)를 보며 칸을 칠한다. 수정은 브라우저에 자동 저장된다.
-3. **ranges.js 내보내기**로 받은 파일로 `train/ranges.js`를 교체하고 push한다.
+현재 `train/ranges.js`는 **학습용 근사치**다 (solver 결과 아님). 가지고 있는 차트 파일은 오픈 훈련 → 차트 보기 → **ranges.js 불러오기**로 자기 브라우저에서만 쓸 수 있다.
 
 형식: `window.RANGES.spots[스택][포지션][핸드] = "R" | "A" | "L" | {"R":0.6,"L":0.3}` (R=레이즈, A=올인, L=림프, 없거나 남는 빈도는 폴드).
 

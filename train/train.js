@@ -43,11 +43,9 @@
   var HANDS = [];
   for (var i = 0; i < 13; i++) for (var j = 0; j < 13; j++) HANDS.push(handAt(i, j));
 
-  var overrides = load("overrides", {});
+  drop("overrides"); // 예전 편집 기능이 남긴 수정본은 더 이상 쓰지 않는다
   function key(stack, pos) { return stack + "|" + pos; }
-  function getSpot(stack, pos) {
-    return overrides[key(stack, pos)] || R.spots[stack][pos];
-  }
+  function getSpot(stack, pos) { return R.spots[stack][pos]; }
   // 핸드의 액션 빈도 {F,R,A}
   function freqs(spot, h) {
     var v = spot[h];
@@ -186,7 +184,7 @@
   } else if (R.meta && R.meta.source === "approx") {
     notice.hidden = false;
     notice.innerHTML = "<b>학습용 근사 레인지</b> · " + R.meta.note +
-      " 실제 solver 차트는 GTOWizard 등에서 직접 확인하고, <b>차트 보기 → 편집</b>으로 옮겨 적을 수 있다.";
+      " 가지고 있는 차트 파일이 있으면 <b>차트 보기 → ranges.js 불러오기</b>로 이 브라우저에서만 쓸 수 있다.";
   }
 
   // ---------- 불러오기 ----------
@@ -204,10 +202,7 @@
         alert("ranges.js 형식이 아니에요. 이 페이지에서 내보낸 파일을 선택해 주세요.");
         return;
       }
-      var hasEdits = Object.keys(overrides).length > 0;
-      if (hasEdits && !confirm("불러오면 지금 편집한 내용은 지워져요. 계속할까요?")) return;
       if (!save("imported", data)) { alert("브라우저 저장소에 저장하지 못했어요."); return; }
-      drop("overrides");
       location.reload();
     });
   });
@@ -411,85 +406,28 @@
   });
 
   // =========================================================
-  // CHART (보기 + 편집)
+  // CHART
   // =========================================================
   var cs = load("chartSel", { stack: R.stacks[0], pos: R.positions[0] });
   if (R.stacks.indexOf(cs.stack) < 0) cs.stack = R.stacks[0];
   if (R.positions.indexOf(cs.pos) < 0) cs.pos = R.positions[0];
-  var cStack = [cs.stack], cPos = [cs.pos], editing = false, brush = "R";
+  var cStack = [cs.stack], cPos = [cs.pos];
 
   function chartChanged() { cs = { stack: cStack[0], pos: cPos[0] }; save("chartSel", cs); drawChart(); }
   chips($("c-stacks"), R.stacks, cStack, false, chartChanged, bb);
   chips($("c-pos"), R.positions, cPos, false, chartChanged);
 
-  var cCells = buildGrid($("c-grid"), {
-    enabled: function () { return editing; },
-    pickValue: function (h) {
-      var cur = category(freqs(getSpot(cs.stack, cs.pos), h));
-      return cur === brush && brush !== "F" ? "F" : brush;
-    },
-    onPaint: function (h, v) {
-      var k = key(cs.stack, cs.pos);
-      if (!overrides[k]) overrides[k] = JSON.parse(JSON.stringify(R.spots[cs.stack][cs.pos]));
-      // 주로 오픈/주로 폴드 브러시는 대표 빈도 75%/25%로 저장한다
-      var stored = { R: "R", A: "A", L: "L", MO: { R: 0.75 }, MF: { R: 0.25 } }[v];
-      if (stored) overrides[k][h] = stored; else delete overrides[k][h];
-      save("overrides", overrides);
-      drawChart();
-    }
-  });
+  var cCells = buildGrid($("c-grid"));
 
   function drawChart() {
     var spot = getSpot(cs.stack, cs.pos), s = summary(spot);
     renderSpot(cCells, spot);
-    HANDS.forEach(function (h) { cCells[h].classList.toggle("clickable", editing); });
-    $("c-cap").innerHTML = cs.stack + "bb · " + cs.pos + " 오픈 레인지" +
-      (overrides[key(cs.stack, cs.pos)] ? '<span class="edited">수정됨</span>' : "");
+    $("c-cap").textContent = cs.stack + "bb · " + cs.pos + " 오픈 레인지";
     $("c-sum").innerHTML = "레이즈 <b>" + s.R.toFixed(1) + "%</b>" +
       (s.A > 0 ? " · 올인 <b>" + s.A.toFixed(1) + "%</b>" : "") +
       " · 전체 오픈 <b>" + s.total.toFixed(1) + "%</b>" +
       (s.L > 0 ? " · 림프 <b>" + s.L.toFixed(1) + "%</b>" : "");
   }
-
-  $("c-edit").addEventListener("click", function () {
-    editing = !editing;
-    this.setAttribute("aria-pressed", editing ? "true" : "false");
-    this.textContent = editing ? "편집 끝내기" : "편집";
-    $("c-brushes").hidden = !editing;
-    drawChart();
-  });
-  document.querySelectorAll("#c-brushes .chip").forEach(function (b) {
-    b.addEventListener("click", function () {
-      brush = b.dataset.brush;
-      document.querySelectorAll("#c-brushes .chip").forEach(function (x) {
-        x.setAttribute("aria-pressed", x === b ? "true" : "false");
-      });
-    });
-  });
-  $("c-revert").addEventListener("click", function () {
-    var k = key(cs.stack, cs.pos);
-    if (!overrides[k]) return;
-    if (!confirm(cs.stack + "bb " + cs.pos + " 차트의 수정 내용을 지울까요?")) return;
-    delete overrides[k];
-    save("overrides", overrides);
-    drawChart();
-  });
-  $("c-export").addEventListener("click", function () {
-    var out = JSON.parse(JSON.stringify(R));
-    var edited = Object.keys(overrides);
-    edited.forEach(function (k) {
-      var p = k.split("|");
-      out.spots[p[0]][p[1]] = overrides[k];
-    });
-    if (edited.length) out.meta = { source: "custom", note: "직접 입력한 차트." };
-    var text = "// 오픈 레인지 데이터. R=레이즈, A=올인, 없으면 폴드.\n" +
-      "// 혼합 빈도는 {\"R\":0.6,\"F\":0.4} 처럼 쓸 수 있다.\n" +
-      "window.RANGES = " + JSON.stringify(out, null, 1) + ";\n";
-    var a = document.createElement("a");
-    a.href = URL.createObjectURL(new Blob([text], { type: "text/javascript" }));
-    a.download = "ranges.js";
-    document.body.appendChild(a); a.click(); a.remove();
-  });
 
   // =========================================================
   // PAINT TEST
