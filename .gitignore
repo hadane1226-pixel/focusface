@@ -1,2 +1,5 @@
 .claude/
 .DS_Store
+# GTOWizard 캡처 등 개인 자료는 공개 저장소에 올리지 않는다
+images/Screenshot*
+private/
