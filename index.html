@@ -47,7 +47,9 @@
 
   .mini{display:grid;grid-template-columns:repeat(13,1fr);gap:2px;max-width:12rem;margin:0 0 1.2rem}
   .mini i{aspect-ratio:1/1;border-radius:2px;background:var(--fold-cell)}
-  .mini i.R{background:#9ccaa9}
+  .mini i.R{background:#8cc59f}
+  .mini i.MO{background:#cfe7d6}
+  .mini i.MF{background:#f3dccf}
   .mini i.A{background:#e3c77a}
 
   .order{max-width:64rem;margin:3.2rem auto 0;padding:0 1.2rem}
@@ -113,7 +115,8 @@
   for(var i=0;i<13;i++)for(var j=0;j<13;j++){
     var h=i===j?ranks[i]+ranks[j]:i<j?ranks[i]+ranks[j]+"s":ranks[j]+ranks[i]+"o";
     var v=spot[h], c=document.createElement("i");
-    if(v) c.className=typeof v==="string"?v:(v.A>=v.R?"A":"R");
+    var o=!v?0:typeof v==="string"?1:(v.R||0)+(v.A||0);
+    c.className=o>=1?(v==="A"?"A":"R"):o>=.5?"MO":o>0?"MF":"";
     el.appendChild(c);
   }
 })();

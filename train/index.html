@@ -48,10 +48,13 @@
   .pc .s{font-size:clamp(1.2rem,4.5vw,1.6rem);margin-top:.2rem}
   .pc.red{color:#b8352a}
   .pc.blk{color:#1c1e1b}
-  .acts{display:grid;grid-template-columns:repeat(auto-fit,minmax(6rem,1fr));gap:.5rem}
-  .act{border:0;border-radius:12px;padding:.85rem .5rem;font-weight:700;font-size:1rem;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:.1rem}
+  .acts{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:.4rem}
+  .act.A{grid-column:1/-1}
+  .act{border:0;border-radius:12px;padding:.8rem .2rem;font-weight:700;font-size:clamp(.82rem,3.4vw,.95rem);white-space:nowrap;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:.1rem}
   .act small{font-family:var(--mono);font-size:.68rem;font-weight:500;opacity:.7}
   .act.F{background:var(--fold-cell);color:#55584f}
+  .act.MF{background:var(--c-mfold);color:#6b3a28}
+  .act.MO{background:var(--c-mopen);color:#1f4a31}
   .act.R{background:var(--raise);color:#fff}
   .act.A{background:var(--allin);color:#1f1a0c}
   .act:disabled{opacity:.35;cursor:default}
@@ -130,9 +133,11 @@
       <div class="seats" id="q-seats"></div>
       <div class="cards" id="q-cards"></div>
       <div class="acts" id="q-acts">
-        <button class="act F" data-a="F">폴드<small>F</small></button>
-        <button class="act R" data-a="R">레이즈<small>R</small></button>
-        <button class="act A" data-a="A">올인<small>A</small></button>
+        <button class="act F" data-a="F">폴드<small>1 · 0%</small></button>
+        <button class="act MF" data-a="MF">주로 폴드<small>2 · 1~49%</small></button>
+        <button class="act MO" data-a="MO">주로 오픈<small>3 · 50~99%</small></button>
+        <button class="act R" data-a="R">오픈<small>4 · 100%</small></button>
+        <button class="act A" data-a="A">올인<small>5 · A</small></button>
       </div>
       <div class="fb" id="q-fb"></div>
       <button class="next" id="q-next">다음 핸드 (Enter)</button>
@@ -147,9 +152,11 @@
         <p class="chartcap" id="q-chartcap"></p>
         <table class="rg" id="q-grid"></table>
         <div class="legend">
-          <span><i class="sw" style="background:var(--raise-bg)"></i>레이즈</span>
-          <span><i class="sw" style="background:var(--allin-bg)"></i>올인</span>
+          <span><i class="sw" style="background:var(--c-open)"></i>오픈</span>
+          <span><i class="sw" style="background:var(--c-mopen)"></i>주로 오픈</span>
+          <span><i class="sw" style="background:var(--c-mfold)"></i>주로 폴드</span>
           <span><i class="sw" style="background:var(--fold-cell)"></i>폴드</span>
+          <span><i class="sw" style="background:var(--allin-bg)"></i>올인</span>
         </div>
       </div>
       <div style="margin-top:1.2rem">
@@ -171,17 +178,21 @@
     <p class="chartcap" id="c-cap"></p>
     <table class="rg" id="c-grid"></table>
     <div class="legend">
-      <span><i class="sw" style="background:var(--raise-bg)"></i>레이즈</span>
-      <span><i class="sw" style="background:var(--allin-bg)"></i>올인</span>
+      <span><i class="sw" style="background:var(--c-open)"></i>오픈</span>
+      <span><i class="sw" style="background:var(--c-mopen)"></i>주로 오픈</span>
+      <span><i class="sw" style="background:var(--c-mfold)"></i>주로 폴드</span>
       <span><i class="sw" style="background:var(--fold-cell)"></i>폴드</span>
+      <span><i class="sw" style="background:var(--allin-bg)"></i>올인</span>
     </div>
     <div class="summary" id="c-sum"></div>
     <div class="tools">
       <button class="btn" id="c-edit" aria-pressed="false">편집</button>
       <span id="c-brushes" hidden>
-        <button class="chip txt" data-brush="R" aria-pressed="true">레이즈</button>
-        <button class="chip txt" data-brush="A" aria-pressed="false">올인</button>
+        <button class="chip txt" data-brush="R" aria-pressed="true">오픈</button>
+        <button class="chip txt" data-brush="MO" aria-pressed="false">주로 오픈</button>
+        <button class="chip txt" data-brush="MF" aria-pressed="false">주로 폴드</button>
         <button class="chip txt" data-brush="F" aria-pressed="false">폴드</button>
+        <button class="chip txt" data-brush="A" aria-pressed="false">올인</button>
       </span>
       <span style="flex:1"></span>
       <button class="btn" id="c-revert">이 차트 원래대로</button>
@@ -205,13 +216,13 @@
       <p class="chartcap" id="t-cap"></p>
       <table class="rg" id="t-grid"></table>
       <div class="legend" id="t-legend">
-        <span><i class="sw" style="background:var(--raise-bg)"></i>오픈(레이즈/올인)으로 칠함</span>
+        <span><i class="sw" style="background:var(--c-open)"></i>오픈 또는 주로 오픈으로 칠함</span>
         <span><i class="sw" style="background:var(--fold-cell)"></i>폴드</span>
       </div>
     </div>
     <div class="box">
       <p class="h3">방법</p>
-      <p style="margin:0 0 1rem;font-size:.92rem;color:var(--muted)">이 스팟에서 오픈하는 핸드를 전부 칠한 뒤 채점한다. 누르거나 드래그해서 칠하고, 칠한 칸을 다시 누르면 지워진다.</p>
+      <p style="margin:0 0 1rem;font-size:.92rem;color:var(--muted)">이 스팟에서 오픈하는 핸드(오픈 빈도 50% 이상, 주로 오픈 포함)를 전부 칠한 뒤 채점한다. 누르거나 드래그해서 칠하고, 칠한 칸을 다시 누르면 지워진다.</p>
       <div class="tools" style="margin:0 0 1rem">
         <button class="btn pri" id="t-grade">채점</button>
         <button class="btn" id="t-clear">지우기</button>

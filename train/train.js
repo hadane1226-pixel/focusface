@@ -3,7 +3,7 @@
 
   var RANKS = "AKQJT98765432";
   var SEATS = ["UTG", "UTG+1", "LJ", "HJ", "CO", "BTN", "SB", "BB"];
-  var NAMES = { F: "폴드", R: "레이즈", A: "올인" };
+  var NAMES = { F: "폴드", MF: "주로 폴드", MO: "주로 오픈", R: "오픈", A: "올인" };
   var $ = function (id) { return document.getElementById(id); };
 
   // ---------- storage ----------
@@ -58,25 +58,23 @@
     if (sum < 1) f.F += 1 - sum;
     return f;
   }
-  function mainAction(f) {
-    return f.R >= f.A && f.R >= f.F ? "R" : f.A >= f.F ? "A" : "F";
-  }
   function openFreq(f) { return f.R + f.A; }
 
+  // 오픈 빈도로 나눈 분류: 오픈(100%) · 주로 오픈(50~99%) · 주로 폴드(1~49%) · 폴드(0%)
+  // 100% 오픈 중 올인이 더 많으면 올인으로 따로 본다
+  function category(f) {
+    var o = openFreq(f);
+    if (o <= 0.001) return "F";
+    if (o >= 0.999) return f.A > f.R ? "A" : "R";
+    return o >= 0.5 ? "MO" : "MF";
+  }
+
   function cellStyle(td, f) {
-    var m = mainAction(f);
-    td.className = m;
+    td.className = category(f);
     td.style.background = "";
-    var parts = ["R", "A", "F"].filter(function (a) { return f[a] > 0.001; });
-    if (parts.length > 1) {
-      var col = { R: "var(--raise-bg)", A: "var(--allin-bg)", F: "var(--fold-cell)" }, acc = 0, stops = [];
-      parts.forEach(function (a) {
-        stops.push(col[a] + " " + acc * 100 + "%");
-        acc += f[a];
-        stops.push(col[a] + " " + acc * 100 + "%");
-      });
-      td.style.background = "linear-gradient(90deg," + stops.join(",") + ")";
-    }
+    var o = openFreq(f);
+    td.title = td.dataset.h + " · 오픈 " + Math.round(o * 100) + "%" +
+      (f.A > 0.001 && f.R > 0.001 ? " (레이즈 " + Math.round(f.R * 100) + "% · 올인 " + Math.round(f.A * 100) + "%)" : "");
   }
 
   // ---------- grid ----------
@@ -250,12 +248,12 @@
   });
 
   // 경계 핸드: 같은 하이카드 안에서 키커가 한 단계 내려갈 때 액션이 바뀌는 지점의 양쪽
-  // (예: K9s 오픈 / K8s 폴드), 페어는 한 단계 낮은 페어와 비교, 혼합 빈도 핸드는 항상 경계
+  // (예: K9s 오픈 / K8s 폴드), 페어는 한 단계 낮은 페어와 비교, 주로 오픈·주로 폴드 핸드는 항상 경계
   function borderHands(spot) {
     var set = {};
     function scan(seq) {
       for (var k = 0; k + 1 < seq.length; k++) {
-        if (mainAction(freqs(spot, seq[k])) !== mainAction(freqs(spot, seq[k + 1]))) {
+        if (category(freqs(spot, seq[k])) !== category(freqs(spot, seq[k + 1]))) {
           set[seq[k]] = set[seq[k + 1]] = true;
         }
       }
@@ -343,8 +341,8 @@
     var btn = document.querySelector('#q-acts .act[data-a="' + a + '"]');
     if (!btn || btn.hidden) return;
     answered = true;
-    var f = cur.f, best = mainAction(f);
-    var ok = f[a] >= 0.3 || a === best;
+    var f = cur.f, best = category(f);
+    var ok = a === best;
     st.n++;
     if (ok) { st.ok++; st.streak++; st.best = Math.max(st.best, st.streak); }
     else {
@@ -359,10 +357,8 @@
     btn.classList.add("picked");
     btn.disabled = false;
 
-    var mixed = ["R", "A", "F"].filter(function (x) { return f[x] > 0.001; });
-    var ans = mixed.length > 1
-      ? mixed.map(function (x) { return NAMES[x] + " " + pct(f[x]); }).join(" · ")
-      : NAMES[best];
+    var ans = NAMES[best] + " <span style='font-weight:400'>(오픈 " + pct(openFreq(f)) +
+      (f.A > 0.001 && f.R > 0.001 ? ", 레이즈 " + pct(f.R) + " · 올인 " + pct(f.A) : f.A > 0.001 ? ", 올인" : "") + ")</span>";
     var fb = $("q-fb");
     fb.className = "fb show " + (ok ? "good" : "bad");
     fb.innerHTML = (ok ? "<b>정답</b> · " : "<b>오답</b> · ") + cur.pos + " " + cur.stack + "bb에서 " +
@@ -403,8 +399,9 @@
   document.addEventListener("keydown", function (e) {
     if ($("p-quiz").hidden || e.metaKey || e.ctrlKey || e.altKey) return;
     if (e.target.closest && e.target.closest("input,textarea")) return;
-    var k = e.key.toLowerCase();
-    if (!answered && (k === "f" || k === "r" || k === "a")) { e.preventDefault(); answer(k.toUpperCase()); }
+    var keymap = { "1": "F", "f": "F", "2": "MF", "3": "MO", "4": "R", "r": "R", "a": "A", "5": "A" };
+    var a = keymap[e.key.toLowerCase()];
+    if (!answered && a) { e.preventDefault(); answer(a); }
     else if (answered && (e.key === "Enter" || e.key === " ")) { e.preventDefault(); newQuestion(); }
   });
 
@@ -423,13 +420,15 @@
   var cCells = buildGrid($("c-grid"), {
     enabled: function () { return editing; },
     pickValue: function (h) {
-      var cur = mainAction(freqs(getSpot(cs.stack, cs.pos), h));
+      var cur = category(freqs(getSpot(cs.stack, cs.pos), h));
       return cur === brush && brush !== "F" ? "F" : brush;
     },
     onPaint: function (h, v) {
       var k = key(cs.stack, cs.pos);
       if (!overrides[k]) overrides[k] = JSON.parse(JSON.stringify(R.spots[cs.stack][cs.pos]));
-      if (v === "F") delete overrides[k][h]; else overrides[k][h] = v;
+      // 주로 오픈/주로 폴드 브러시는 대표 빈도 75%/25%로 저장한다
+      var stored = { R: "R", A: "A", MO: { R: 0.75 }, MF: { R: 0.25 } }[v];
+      if (stored) overrides[k][h] = stored; else delete overrides[k][h];
       save("overrides", overrides);
       drawChart();
     }
