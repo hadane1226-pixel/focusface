@@ -10,14 +10,6 @@ const POSITIONS = ["UTG", "UTG+1", "LJ", "HJ", "CO", "BTN", "SB"];
 const BASE_PCT = { "UTG": 17, "UTG+1": 20, "LJ": 24, "HJ": 29, "CO": 37, "BTN": 50, "SB": 42 };
 const STACK_MUL = { 100: 1, 80: 1, 60: .98, 50: .97, 40: .95, 30: .93, 25: .92, 20: .92, 15: .95 };
 
-// 입문 블로그 2장의 UTG 100bb 예시와 동일하게 맞춘다
-const BLOG_UTG = [
-  "AA","KK","QQ","JJ","TT","99","88","77","66","55","44","33","22",
-  "AKs","AQs","AJs","ATs","A9s","A8s","A7s","A6s","A5s","A4s","A3s","A2s",
-  "KQs","KJs","KTs","QJs","QTs","JTs","T9s","T8s","98s","87s","76s","65s","54s",
-  "AKo","AQo","AJo","KQo"
-];
-
 const num = r => 14 - RANKS.indexOf(r);
 const combos = h => h.length === 2 ? 6 : h[2] === "s" ? 4 : 12;
 
@@ -30,29 +22,41 @@ function allHands() {
   return out;
 }
 
-// Chen 공식 + 스택 깊이 보정
+// 프리플랍 오픈 가치 점수 (일반 원칙 기반 휴리스틱)
+// - 페어: 셋을 맞추면 큰 팟을 이기고, 쇼다운 가치도 있어 높게 친다
+// - 수딧: 플러쉬 가능성 + 연결성(스트레이트)이 플레이어빌리티를 만든다. A·K 수딧은 블락커와 넛 플러쉬 가치
+// - 오프수딧: 도미네이트되기 쉽고 발전성이 낮아 크게 깎는다
+const HV = { 14: 40, 13: 34, 12: 29, 11: 26, 10: 24, 9: 22, 8: 21, 7: 20, 6: 19, 5: 18, 4: 16, 3: 14, 2: 12 };
 function score(h, stack) {
-  const a = h[0], b = h[1], pair = h.length === 2, suited = h[2] === "s";
-  const hv = { A: 10, K: 8, Q: 7, J: 6 }[a] ?? num(a) / 2;
+  const hi = num(h[0]), lo = num(h[1]), pair = h.length === 2, suited = h[2] === "s";
+  const deep = stack >= 60, shallow = stack <= 30;
+  if (pair) {
+    let s = 38.5 + 2.5 * (hi - 2);        // 22=38.5, 44=43.5, 77=51, TT=58.5
+    if (shallow) s += 2;                  // 짧을수록 셋 마이닝 대신 쇼다운 가치
+    return s;
+  }
+  const gap = hi - lo - 1;
   let s;
-  if (pair) s = Math.max(5, hv * 2);
-  else {
-    s = hv + (suited ? 2 : 0);
-    const gap = num(a) - num(b) - 1;
-    s -= [0, 1, 2, 4][gap] ?? 5;
-    if (gap <= 1 && num(a) < 12) s += 1;
-    if (!suited && num(a) < 13 && num(b) < 9) s -= 1.5; // 낮은 오프수딧은 플레이어빌리티가 나쁘다
+  if (suited) {
+    s = HV[hi] + 1.2 * lo;
+    if (hi >= 13) s += 0;                 // A·K 수딧은 갭 페널티 없음
+    else if (gap === 0) s += hi <= 10 ? 11 : 6;
+    else if (gap === 1) s += hi <= 10 ? 6 : 7;
+    else if (gap === 2) s += 0;
+    else s -= 2 + (gap - 3);
+    if (hi === 14 && lo <= 5 && lo >= 3) s += 2; // A5s~A3s: 휠 스트레이트
+    if (hi === 14 && lo === 2) s -= 1.5;  // A2s: 휠은 되지만 키커가 가장 약하다
+    // 낮은 수딧 커넥터·원갭은 카드 높이보다 연결성이 가치를 만든다
+    if (hi <= 10 && hi >= 5 && gap === 0) s = Math.max(s, 37 + 0.6 * hi);
+    if (hi <= 9 && hi >= 6 && gap === 1) s = Math.max(s, 34 + 0.5 * hi);
+    if (hi <= 10 && gap <= 1) s += deep ? 1.5 : shallow ? -3 : 0; // 깊을수록 발전형 핸드 가치 상승
+  } else {
+    // 오프수딧: 키커가 약하면 도미네이트당하기 쉬워 키커 비중을 크게 둔다
+    s = HV[hi] + 2 * lo - 17;
+    if (gap === 0) s += 5; else if (gap === 1) s += 1.5;
+    if (shallow && hi === 14) s += 3;     // 짧을수록 Ax 오프 가치 상승
   }
-  if (stack <= 40) {
-    if (pair) s += 1;
-    if (!pair && a === "A" && !suited && num(b) >= 7) s += 1;
-    if (!pair && suited && num(a) < 10) s -= 1;
-  }
-  if (stack <= 20) {
-    if (pair) s += 1;
-    if (!pair && a === "A") s += 1;
-  }
-  return Math.ceil(s) + (num(a) + num(b)) / 100 + (suited ? .005 : 0);
+  return s + (suited ? .01 : 0) + lo / 1000;
 }
 
 function isShove(h) {
@@ -69,14 +73,8 @@ for (const stack of STACKS) {
   spots[stack] = {};
   for (const pos of POSITIONS) {
     const byScore = (x, y) => score(y, stack) - score(x, stack);
-    let order = [...hands].sort(byScore);
-    if (stack >= 80) {
-      const blog = [...BLOG_UTG].sort(byScore);
-      order = [...blog, ...order.filter(h => !BLOG_UTG.includes(h))];
-    }
-    const target = pos === "UTG" && stack === 100
-      ? BLOG_UTG.reduce((n, h) => n + combos(h), 0)
-      : Math.round(1326 * BASE_PCT[pos] * STACK_MUL[stack] / 100);
+    const order = [...hands].sort(byScore);
+    const target = Math.round(1326 * BASE_PCT[pos] * STACK_MUL[stack] / 100);
     const shoveSpot = (stack <= 15 && ["HJ", "CO", "BTN", "SB"].includes(pos)) ||
                       (stack === 20 && ["BTN", "SB"].includes(pos));
     const spot = {};

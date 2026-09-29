@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <title>Focus Face</title>
+  <rect width="512" height="512" rx="112" fill="#10231d"/>
+  <path fill="#f5f3ec" d="M104 128h144v52h-88v54h76v50h-76v100h-56z"/>
+  <path fill="#c19a3f" d="M264 128h144v52h-88v54h76v50h-76v100h-56z"/>
+</svg>
