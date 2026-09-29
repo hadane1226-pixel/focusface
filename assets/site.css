@@ -19,6 +19,7 @@
   --c-open:#8cc59f;
   --c-mopen:#cfe7d6;
   --c-mfold:#f3dccf;
+  --c-limp:#cfe0ef;
   --mono:"SFMono-Regular",ui-monospace,"JetBrains Mono",Menlo,Consolas,monospace;
   --sans:"Pretendard","Apple SD Gothic Neo","Malgun Gothic",system-ui,sans-serif;
 }
@@ -53,6 +54,7 @@ button{font:inherit;color:inherit}
 .rg td.MO{background:var(--c-mopen)}
 .rg td.MF{background:var(--c-mfold);color:#8a5a45}
 .rg td.A{background:var(--allin-bg)}
+.rg td.L{background:var(--c-limp)}
 .rg td.hl{outline:3px solid var(--text);outline-offset:-3px;z-index:1}
 .rg td.g-ok{background:var(--raise-bg);color:#25332c}
 .rg td.g-miss{background:var(--fold-bg);color:var(--fold)}
