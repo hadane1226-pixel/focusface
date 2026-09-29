@@ -76,7 +76,7 @@
   /* TOC */
   .toc{padding-top:2.8rem}
   .toc h2{font-size:.78rem;font-weight:700;color:var(--muted);letter-spacing:.05em;margin:0 0 .9rem}
-  .toc ol{list-style:none;margin:0;padding:0;counter-reset:c}
+  .toc ol{list-style:none;margin:0;padding:0;counter-reset:c -1}
   .toc li{counter-increment:c;margin:.15rem 0}
   .toc a{
     display:grid;grid-template-columns:1.6rem 1fr;gap:.5rem;align-items:baseline;
@@ -143,6 +143,8 @@
   .dtable td.num{font-family:var(--mono);text-align:right;white-space:nowrap}
 
   /* image placeholder */
+  .shell>*{min-width:0}
+  .seq{font-family:var(--mono);font-size:.88rem;background:var(--paper-2);border:1px solid var(--line);border-radius:10px;padding:.6rem .9rem;color:var(--felt);font-weight:600;overflow-x:auto;white-space:nowrap}
   .imgslot{
     border:2px dashed var(--line);border-radius:12px;background:var(--paper-2);
     padding:1.6rem;text-align:center;color:var(--muted);font-size:.86rem;margin:1.3rem 0;
@@ -187,8 +189,9 @@
       <li><a href="#c7">벳은 왜 하나요?</a></li>
       <li><a href="#c8">기교를 부리고 싶어요</a></li>
       <li><a href="#c9">베팅은 얼마나 해야 되지?</a></li>
-      <li><a href="#c10">C발? 아니 C벳</a></li>
+      <li><a href="#c10">형이 레이즈했잖아, 플랍도 형이 친다</a></li>
       <li><a href="#c11">스스로 궁지에 몰아넣어버렸다</a></li>
+      <li><a href="#c12">가위만 내는 상대에게는 주먹만 내어 응징하라</a></li>
     </ol>
   </nav>
 
@@ -208,6 +211,15 @@
           <dt>팟 (Pot)</dt><dd>지금까지 테이블에 모인 돈. 이 판에서 싸워서 가져갈 대상.</dd>
         </dl>
       </div>
+      <p>카드만이 아니라 <strong>자리</strong>에도 이름이 있다. 테이블에는 <em>딜러 버튼(D)</em>이 한 판마다 시계방향으로 한 칸씩 돌고, 버튼을 기준으로 각 자리의 이름이 정해진다. 자리 이름은 2장에서 자세히 보고, 여기서는 가장 중요한 두 단어만 먼저 익히자.</p>
+      <div class="terms">
+        <div class="t-label">용어 · 자리</div>
+        <dl>
+          <dt>IP (In Position)</dt><dd>플랍 이후 상대보다 <strong>나중에</strong> 액션하는 쪽. 상대가 체크했는지 벳했는지 보고 나서 결정할 수 있다.</dd>
+          <dt>OOP (Out of Position)</dt><dd>플랍 이후 상대보다 <strong>먼저</strong> 액션해야 하는 쪽. 상대보다 먼저 내 선택을 보여줘야 한다.</dd>
+        </dl>
+      </div>
+      <p>IP가 유리한 이유는 단순하다. <strong>정보를 하나 더 보고 결정한다.</strong> 상대가 체크하면 나는 공짜로 다음 카드를 볼지, 벳해서 팟을 가져오려 할지 고를 수 있다. 상대가 벳하면 콜할지 접을지를 상대 행동을 다 본 뒤에 정한다. 팟 크기도 마지막에 행동하는 내가 조절한다. 그래서 같은 핸드라도 IP에서 치면 더 많이 벌고 덜 잃는다. 이 차이가 앞으로 나올 거의 모든 전략의 밑바탕이 된다.</p>
       <p>이 블로그의 이론은 두 덩어리로 나뉜다. 카드가 깔리기 전 <em>프리플랍</em>에서 어떻게 결정하느냐가 하나, 카드가 깔린 뒤 <em>포스트플랍</em>에서 어떻게 결정하느냐가 다른 하나다.</p>
     </section>
 
@@ -245,6 +257,10 @@
         </dl>
       </div>
       <p>다 외우기 벅차면 네 덩어리로 묶자. 앞자리 <em>EP</em>, 중간 <em>MP</em>, 뒷자리 <em>LP</em>, 그리고 <em>Blinds</em>. 핵심 원칙은 하나다. <strong>앞자리일수록 좁게, 뒷자리일수록 넓게.</strong> 앞자리에서 오픈하면 아직 액션 안 한 사람이 뒤에 잔뜩 남아 위험하고, 뒷자리는 그 위험이 작기 때문이다.</p>
+      <p>뒷자리가 넓게 여는 이유가 하나 더 있다. 0장에서 본 <em>IP</em>다. 플랍부터는 액션 순서가 이렇게 고정된다.</p>
+      <p class="seq">SB → BB → UTG → UTG+1 → UTG+2 → LJ → HJ → CO → D</p>
+      <p>오른쪽으로 갈수록 나중에 액션한다. 즉 <strong>D(버튼)는 플랍 이후 누구를 만나도 항상 IP</strong>이고, <strong>CO는 버튼만 빼면 모두에게 IP</strong>다. 반대로 블라인드(SB·BB)는 프리플랍에서는 마지막에 액션하지만 플랍부터는 가장 먼저 액션하기 때문에, 대부분 OOP로 싸운다.</p>
+      <p>그래서 D와 CO는 조금 약한 핸드로도 판에 들어갈 수 있다. 같은 핸드라도 IP로 싸우면 상대 행동을 보고 결정할 수 있어서, 약한 핸드로도 더 많은 이득을 뽑아낼 수 있기 때문이다. 오픈 차트가 뒷자리로 갈수록 넓어지는 건 "뒤에 남은 사람이 적다"와 "플랍 이후 IP로 싸운다", 이 두 가지가 겹친 결과다.</p>
 
       <div class="callout gold">
         <div class="c-tag">초보자가 놓치는 핵심</div>
@@ -367,10 +383,11 @@
           <dt>에퀴티 디나이 (Equity denial)</dt><dd>상대에게 공짜 카드를 안 주려는 벳. 역전 기회 자체를 뺏는다.</dd>
         </dl>
       </div>
-      <p><strong>예시로 보자.</strong> 보드가 K72 무지개, 내가 KQ를 들었다. 상대의 K약키커, 77 이하 포켓, A하이가 콜할 수 있으니 이건 <em>밸류벳</em>이다. 반대로 내가 J9 플러쉬 드로우만 있다면? 지금은 아무것도 아니지만 상대의 애매한 핸드를 접게 만들 수 있는 <em>블러프</em>다.</p>
+      <p><strong>예시로 보자.</strong> 보드가 K♠7♠2♦, 스페이드가 두 장 깔렸다. 내가 KQ를 들었다면 상대의 K약키커, 77 이하 포켓, A하이가 콜할 수 있으니 이건 <em>밸류벳</em>이다. 반대로 내가 J♠9♠를 들었다면? 지금은 J 하이에 불과하지만 스페이드 한 장만 더 오면 플러쉬가 되는 <em>플러쉬 드로우</em>다. 지금 벳하면 상대의 애매한 핸드를 접게 만들 수 있으니 이건 <em>블러프</em>다.</p>
+      <p class="lead">참고: 보드 세 장의 무늬가 전부 다르면(레인보우 보드) 플랍에서 플러쉬 드로우는 생길 수 없다. 플러쉬 드로우가 되려면 보드에 내 무늬가 두 장 이상 있어야 한다.</p>
       <div class="callout gold">
         <div class="c-tag">블러프에도 근거가 있다</div>
-        <p>아무 핸드로나 블러프하지 않는다. 3장의 블러프 3벳과 똑같은 논리다. <strong>에퀴티(발전 가능성)</strong>가 있거나 <strong>블락커</strong>가 좋은 핸드로 블러프한다. 위 J9는 플러쉬로 자랄 에퀴티가 있어서 좋은 블러프 후보다. 콜당해도 이길 여지가 남기 때문이다.</p>
+        <p>아무 핸드로나 블러프하지 않는다. 3장의 블러프 3벳과 똑같은 논리다. <strong>에퀴티(발전 가능성)</strong>가 있거나 <strong>블락커</strong>가 좋은 핸드로 블러프한다. 위 J♠9♠는 플러쉬로 자랄 에퀴티가 있어서 좋은 블러프 후보다. 콜당해도 이길 여지가 남기 때문이다.</p>
       </div>
       <p>목적 없는 벳은 그냥 돈을 버리는 것이다. 벳 버튼을 누르기 전에 항상 "이 벳은 밸류인가, 블러프인가, 디나이인가"를 먼저 답하자.</p>
     </section>
@@ -407,25 +424,37 @@
       </div>
       <p>크기는 기분이 아니라 <strong>내 레인지의 밸류 대 블러프 비율</strong>에서 나온다. 이걸 가장 깔끔하게 보여주는 장난감이 <em>AKQ 게임</em>이다.</p>
       <div class="callout gold">
-        <div class="c-tag">AKQ 게임</div>
-        <p>카드가 A, K, Q 셋뿐이라고 하자. A는 항상 이기고(밸류), Q는 항상 진다(블러프 후보), K는 <strong>블러프는 이기고 밸류엔 지는</strong> 어중간한 캐처다. 벳하는 사람은 A로 밸류벳, Q로 블러프한다. 그럼 상대(K를 든 사람)는 콜해야 할까?</p>
-        <p>여기서 두 숫자가 튀어나온다. <strong>① 벳하는 쪽</strong>은 상대가 K로 콜하든 폴드하든 손해 안 보도록 밸류와 블러프 비율을 맞춘다. <strong>② 콜하는 쪽</strong>은 자기 팟오즈만큼의 승률이 나오도록 콜 빈도를 맞춘다. 벳이 커질수록 상대가 콜하기 힘든 팟오즈를 강요할 수 있어 <strong>블러프를 더 섞을 수 있고</strong>, 그래서 폴라라이즈된 레인지는 크게(오버벳까지) 벳한다.</p>
+        <div class="c-tag">AKQ 게임 · 규칙</div>
+        <p>카드가 A, K, Q 세 장뿐이다. 두 사람이 한 장씩 받고, 높은 카드가 이긴다. 팟에는 이미 <strong>100</strong>이 있고, 나(벳하는 쪽)는 벳 또는 체크, 상대는 콜 또는 폴드만 할 수 있다.</p>
+        <p>이해하기 쉽게 <strong>상대는 항상 K</strong>를 들고 있다고 하자. 그러면 나는 A 아니면 Q를 반반 확률로 들고 있다.</p>
       </div>
-      <p>실전에서 외워둘 <strong>팟벳(100%) 기준값</strong>은 이렇다.</p>
+      <p><strong>① A를 들면 무조건 벳한다.</strong> 무조건 이기니까 한 푼이라도 더 받아야 한다. 이게 <em>밸류</em>다.</p>
+      <p><strong>② Q를 들면?</strong> 체크하면 무조건 진다. 벳해서 상대가 K를 접어야만 이긴다. 그래서 Q의 벳은 순수한 <em>블러프</em>다.</p>
+      <p><strong>③ 상대의 K는?</strong> 콜하면 내 블러프(Q)는 잡고 내 밸류(A)에는 진다. 이렇게 블러프만 이길 수 있는 핸드를 <em>블러프 캐처</em>라고 한다. 상대의 고민은 딱 하나, "얼마나 자주 콜할까"다.</p>
+      <p>이제 내가 <strong>팟만큼(100) 벳</strong>한다고 해보자.</p>
+      <p><strong>상대의 계산.</strong> 콜하면 100을 넣어 300짜리 팟(원래 팟 100 + 내 벳 100 + 콜 100)을 가져간다. 6장의 팟오즈 그대로, 필요 승률은 100 ÷ 300 = <strong>33%</strong>다. 내 벳 중 블러프가 33%보다 많으면 콜이 이득이고, 적으면 폴드가 이득이다.</p>
+      <p><strong>나의 계산 · 블러프를 얼마나 섞을까.</strong> 블러프를 너무 많이 하면 상대는 늘 콜해서 블러프를 잡아먹는다. 너무 적게 하면 상대는 늘 폴드해서 내 A가 돈을 못 번다. 그래서 상대가 콜하든 폴드하든 똑같아지도록, 블러프를 정확히 33%(<strong>블러프 1 : 밸류 2</strong>)로 맞춘다. A는 매번 벳하고 Q는 절반만 벳하면 딱 이 비율이 된다.</p>
+      <p><strong>상대의 계산 · 얼마나 자주 콜할까.</strong> 상대가 너무 자주 폴드하면 나는 Q로 매번 블러프해서 이득을 본다. Q로 블러프하면 상대가 폴드할 때 +100(팟), 콜할 때 −100(내 벳)이다. 이 둘이 같아지는, 즉 내 블러프가 본전이 되는 지점은 상대가 <strong>50% 콜</strong>할 때다. 이 50%가 <em>MDF(최소 방어 빈도)</em>이고, 계산은 팟 ÷ (팟 + 벳) = 100 ÷ 200이다.</p>
+      <p>벳 크기를 바꿔서 같은 계산을 하면 이렇다. 팟 100 기준이고, 팟벳 줄은 외워두자.</p>
       <table class="dtable">
-        <thead><tr><th>팟벳일 때</th><th class="num">값</th></tr></thead>
+        <thead><tr><th>벳 크기</th><th class="num">콜 필요 승률</th><th class="num">블러프 비율</th><th class="num">MDF</th></tr></thead>
         <tbody>
-          <tr><td>벳하는 쪽의 밸류 : 블러프 비율</td><td class="num">2 : 1 (블러프 1/3)</td></tr>
-          <tr><td>콜하는 쪽에게 필요한 승률(팟오즈)</td><td class="num">약 33%</td></tr>
-          <tr><td>콜하는 쪽의 방어 빈도(MDF)</td><td class="num">약 50%</td></tr>
+          <tr><td>1/3팟 (33)</td><td class="num">20%</td><td class="num">20%</td><td class="num">75%</td></tr>
+          <tr><td>1/2팟 (50)</td><td class="num">25%</td><td class="num">25%</td><td class="num">67%</td></tr>
+          <tr><td><strong>팟 (100)</strong></td><td class="num"><strong>33%</strong></td><td class="num"><strong>33%</strong></td><td class="num"><strong>50%</strong></td></tr>
+          <tr><td>2배 팟 (200)</td><td class="num">40%</td><td class="num">40%</td><td class="num">33%</td></tr>
         </tbody>
       </table>
-      <p class="lead">즉 밸류가 많으면 크게 벳해도 되고, 밸류가 어중간하게 뭉쳐 있으면 작게 벳하는 게 맞다. 사이징은 레인지 구성이 정한다.</p>
+      <div class="callout good">
+        <div class="c-tag">그래서 사이징은</div>
+        <p>벳이 클수록 상대는 콜하기 어려워지고, 나는 <strong>블러프를 더 많이 섞을 수 있다.</strong> 그래서 A처럼 확실한 밸류와 Q처럼 확실한 블러프로 양극단에 나뉜(폴라라이즈된) 레인지는 크게, 심지어 오버벳까지 한다. 반대로 확실한 밸류가 적고 어중간한 핸드가 뭉쳐 있으면 블러프도 조금만 섞어야 하니 작게 벳하는 게 맞다. 사이징은 기분이 아니라 레인지 구성이 정한다.</p>
+      </div>
     </section>
 
     <!-- 10 -->
     <section class="ch" id="c10">
-      <div class="ch-head"><span class="ch-num">10</span><h2>C발? 아니 C벳</h2></div>
+      <div class="ch-head"><span class="ch-num">10</span><h2>형이 레이즈했잖아, 플랍도 형이 친다</h2></div>
+      <p>프리플랍에서 레이즈로 "내가 더 세다"고 큰소리쳤다면, 플랍에서도 그 이야기를 이어가는 게 자연스럽다. 먼저 레이즈한 사람이 쥔 이 주도권(이니셔티브)을 플랍까지 끌고 가는 벳이 C벳이다.</p>
       <div class="terms">
         <div class="t-label">용어</div>
         <dl>
@@ -447,18 +476,57 @@
     <!-- 11 -->
     <section class="ch" id="c11">
       <div class="ch-head"><span class="ch-num">11</span><h2>스스로 궁지에 몰아넣어버렸다</h2></div>
-      <p>마지막이다. 지금까지 스트리트별로 쪼개서 배웠다면, 이제 <strong>한 판을 통째로 설계하는 법</strong>을 본다.</p>
+      <p>지금까지 스트리트별로 쪼개서 배웠다면, 이제 <strong>한 판을 통째로 설계하는 법</strong>을 본다.</p>
       <div class="terms">
         <div class="t-label">용어</div>
         <dl>
           <dt>SPR (Stack-to-Pot Ratio)</dt><dd>지금 남은 유효 스택 ÷ 현재 팟. 이 숫자가 작으면 스택이 얕고, 조금만 쳐도 금방 올인 각이 난다.</dd>
         </dl>
       </div>
-      <p>특히 SPR이 <strong>낮을 때</strong>가 중요하다. 스택이 얕으면 아무 생각 없이 치다가 리버에서 애매한 금액만 남아 이도저도 못 하는 상황에 빠진다. 스스로 궁지에 몰아넣는 것이다.</p>
-      <p>그래서 SPR이 낮으면 <strong>미리 계획한다.</strong> 예를 들어 턴부터 사이징을 키워두면, 리버에 딱 팟벳이나 셔브로 남은 돈을 자연스럽게 다 밀어넣게 판이 짜인다. 리버에서 즉흥적으로 정하는 게 아니라, 턴에서 이미 리버까지 그림을 그려두는 것이다.</p>
+      <p>SPR이 낮다는 것 자체가 나쁜 건 아니다. 위험한 건 <strong>SPR이 낮은데 계획 없이 칠 때</strong>다. 숫자로 보자. 플랍에서 팟이 100이고, 둘 다 150씩 남았다(SPR 1.5).</p>
+      <p><strong>계획 없이 작게 두 번 벳하면.</strong> 플랍에 33을 벳하고 콜을 받는다. 팟 166, 남은 스택 117. 턴에 55를 벳하고 또 콜을 받는다. 팟 276, 남은 스택은 62뿐이다.</p>
+      <p>이제 리버가 문제다. 내가 남은 62를 벳하면 상대는 62를 넣어 400짜리 팟을 노리니, 필요 승률이 62 ÷ 400 = <strong>약 15%</strong>밖에 안 된다. 상대는 거의 아무 핸드로나 콜하니 <strong>이 62로는 블러프가 안 된다.</strong> 반대로 내가 체크했는데 상대가 올인하면, 이번엔 내가 똑같이 좋은 팟오즈를 받아 <strong>접을 수가 없다.</strong> 남은 금액은 애매한데 선택권은 사라진, 이도저도 못 하는 상황이다. 스스로 궁지에 몰아넣은 것이다.</p>
+      <p><strong>미리 계획하면.</strong> 처음부터 "두 스트리트에 걸쳐 150을 다 넣겠다"고 정한다. 플랍에 50(팟의 50%)을 벳하면 팟 200, 남은 스택 100. 턴에 100(다시 팟의 50%)을 벳하면 그게 딱 올인이다. 똑같이 두 번 벳했는데 애매한 돈이 남지 않고 깔끔하게 끝난다. 이렇게 매 스트리트 같은 비율로 키워서 마지막에 정확히 올인이 되게 하는 걸 <em>기하 사이징(geometric sizing)</em>이라고 한다.</p>
+      <div class="callout gold">
+        <div class="c-tag">SPR이 정하는 핸드의 가치</div>
+        <p>SPR이 낮으면 <strong>탑페어·오버페어 같은 원페어의 가치가 올라간다.</strong> 넣을 돈이 얼마 안 남아서, 원페어로 끝까지 가도 크게 다칠 일이 적다. 반대로 SPR이 높으면 원페어로 스택 전부를 걸기엔 위험하고, 셋이나 드로우처럼 크게 이기는 핸드의 가치가 올라간다. 그래서 3벳 팟처럼 SPR이 낮은 판에서는 플랍을 보자마자 "이 핸드로 올인까지 갈 건가"를 먼저 정하는 게 핵심이다.</p>
+      </div>
       <div class="callout good">
         <div class="c-tag">여기까지 왔다면</div>
-        <p>이걸 이해하려면 앞의 전부가 필요하다. 상대가 콜할지(6장 팟오즈·에퀴티), 얼마나 벳할지(9장 사이징), 이걸 한 판 흐름 위에 얹는 게 SPR 사고다. 이제 포커를 액션 하나하나가 아니라 <strong>한 판 전체</strong>로 보기 시작한 것이다. 축하한다.</p>
+        <p>이걸 이해하려면 앞의 전부가 필요하다. 상대가 콜할지(6장 팟오즈·에퀴티), 얼마나 벳할지(9장 사이징), 이걸 한 판 흐름 위에 얹는 게 SPR 사고다. 이제 포커를 액션 하나하나가 아니라 <strong>한 판 전체</strong>로 보기 시작한 것이다. 마지막 장에서는 지금까지의 모든 이론이 깔고 있던 전제를 하나 뒤집어본다.</p>
+      </div>
+    </section>
+
+    <!-- 12 -->
+    <section class="ch" id="c12">
+      <div class="ch-head"><span class="ch-num">12</span><h2>가위만 내는 상대에게는 주먹만 내어 응징하라</h2></div>
+      <p>지금까지 배운 모든 이론에는 숨은 가정이 하나 있다. <strong>나도 상대도 가장 이상적으로, 이론대로 플레이한다</strong>는 가정이다. 이 가정 아래서 나온 전략을 <em>GTO</em>라고 부른다.</p>
+      <div class="terms">
+        <div class="t-label">용어</div>
+        <dl>
+          <dt>GTO (Game Theory Optimal)</dt><dd>상대가 어떻게 나오든 나를 공략할 수 없는 균형 전략. 서로 이 전략을 쓰면 누구도 전략을 바꿀 이유가 없다.</dd>
+          <dt>EV (Expected Value)</dt><dd>기댓값. 같은 상황을 수없이 반복했을 때 한 번에 평균적으로 얻는 돈.</dd>
+          <dt>익스플로잇 (Exploit, 줄여서 익스)</dt><dd>상대가 이론대로 치지 않을 때, 그 치우침을 파고들어 EV를 더 가져가도록 내 전략을 일부러 바꾸는 것.</dd>
+        </dl>
+      </div>
+      <p><strong>가위바위보로 보자.</strong> 가위바위보의 GTO는 가위·바위·보를 1/3씩 무작위로 내는 것이다. 이렇게 내면 상대가 무슨 수를 써도 나를 이길 수 없다. 대신 나도 상대를 이기지 못해서, 기댓값은 딱 0이다.</p>
+      <p>그런데 상대가 계속 <strong>가위만</strong> 낸다면? 1/3씩 고집할 이유가 없다. <strong>주먹만 내면 매판 이긴다.</strong> 상대가 이론에서 벗어난 만큼 내 전략도 바꿔서 EV를 가져오는 것, 이게 익스플로잇이다.</p>
+      <div class="callout warn">
+        <div class="c-tag">공짜 점심은 없다</div>
+        <p>주먹만 내는 순간 나도 치우친 전략이 된다. 상대가 눈치채고 보를 내기 시작하면 이번엔 내가 당한다. 익스플로잇은 상대를 더 크게 이기는 대신 <strong>나도 공략당할 틈</strong>을 연다. 그래서 상대가 정말 치우쳐 있다는 근거가 쌓였을 때, 그 치우침만큼만 벗어나는 게 좋다.</p>
+      </div>
+      <p><strong>포커에서는 이렇게 쓴다.</strong> 9장 AKQ 게임을 떠올려보자. 이론상 상대는 팟벳에 50% 콜해야 했다. 그런데 이 상대가 겁이 많아서 20%만 콜한다면? Q로 매번 블러프하면 된다. 반대로 뭐든 다 콜하는 상대라면? 블러프를 아예 끊고 A로만 벳하면 된다. 가위만 내는 상대에게 주먹을 내는 것과 똑같다.</p>
+      <table class="dtable">
+        <thead><tr><th>상대 유형</th><th>치우침</th><th>익스플로잇</th></tr></thead>
+        <tbody>
+          <tr><td>콜링 스테이션</td><td>뭐든 콜한다</td><td>블러프를 줄이고, 밸류벳은 더 크게·더 약한 핸드로도</td></tr>
+          <tr><td>니트</td><td>너무 자주 폴드한다</td><td>블러프·C벳을 늘리고, 이 상대가 레이즈하면 믿고 접는다</td></tr>
+          <tr><td>매니악</td><td>뭐든 벳·레이즈한다</td><td>블러프 캐처로 더 자주 콜하고, 강한 핸드는 트랩(8장)</td></tr>
+        </tbody>
+      </table>
+      <div class="callout good">
+        <div class="c-tag">끝까지 왔다면</div>
+        <p>GTO는 기준선이다. 기준을 알아야 상대가 어디서 벗어났는지 보이고, 그래야 어떻게 응징할지도 보인다. 앞의 열두 장은 그 기준을 세우는 과정이었고, 익스플로잇은 그 위에 쌓는 무기다. 동아리 게임처럼 상대가 이론대로 치지 않는 판에서는 오히려 익스가 더 큰 돈이 된다. 이제 가위만 내는 상대를 찾으러 가자. 축하한다.</p>
       </div>
     </section>
 
