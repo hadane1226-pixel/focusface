@@ -436,7 +436,7 @@
   var ts = load("paintSel", { stack: R.stacks[0], pos: R.positions[0] });
   if (R.stacks.indexOf(ts.stack) < 0) ts.stack = R.stacks[0];
   if (R.positions.indexOf(ts.pos) < 0) ts.pos = R.positions[0];
-  var tStack = [ts.stack], tPos = [ts.pos], painted = {}, graded = false;
+  var tStack = [ts.stack], tPos = [ts.pos], painted = {}, graded = false, tBrush = "R";
   var bestScores = load("paintBest", {});
 
   function paintChanged() { ts = { stack: tStack[0], pos: tPos[0] }; save("paintSel", ts); newPaint(false); }
@@ -448,10 +448,11 @@
 
   var tCells = buildGrid($("t-grid"), {
     enabled: function () { return !graded; },
-    pickValue: function (h) { return !painted[h]; },
+    // 같은 붓으로 칠한 칸을 다시 누르면 지워진다
+    pickValue: function (h) { return painted[h] === tBrush ? "F" : tBrush; },
     onPaint: function (h, v) {
-      if (v) painted[h] = true; else delete painted[h];
-      tCells[h].className = "clickable " + (painted[h] ? "R" : "F");
+      if (v === "F") delete painted[h]; else painted[h] = v;
+      tCells[h].className = "clickable " + (painted[h] || "F");
     }
   });
 
@@ -463,32 +464,46 @@
     }
     painted = {}; graded = false;
     HANDS.forEach(function (h) { tCells[h].className = "clickable F"; tCells[h].style.background = ""; });
-    $("t-cap").textContent = ts.stack + "bb · " + ts.pos + " 에서 오픈하는 핸드를 칠하자";
+    $("t-cap").textContent = ts.stack + "bb · " + ts.pos + " 레인지를 칠하자";
     $("t-result").hidden = true;
     $("t-legend").hidden = false;
     var b = bestScores[key(ts.stack, ts.pos)];
     $("t-best").textContent = b != null ? b + "%" : "-";
   }
 
+  document.querySelectorAll("#t-brushes .chip").forEach(function (b) {
+    b.addEventListener("click", function () {
+      tBrush = b.dataset.brush;
+      document.querySelectorAll("#t-brushes .chip").forEach(function (x) {
+        x.setAttribute("aria-pressed", x === b ? "true" : "false");
+      });
+    });
+  });
   $("t-random").addEventListener("click", function () { newPaint(true); });
   $("t-clear").addEventListener("click", function () { newPaint(false); });
   $("t-grade").addEventListener("click", function () {
     if (graded) return;
     graded = true;
-    var spot = getSpot(ts.stack, ts.pos), hit = 0, miss = 0, extra = 0, nMiss = 0, nExtra = 0;
+    // 퀴즈와 같은 채점: 가장 자주 하는 액션, 또는 30% 이상 쓰는 액션이면 정답 (안 칠한 칸 = 폴드)
+    var spot = getSpot(ts.stack, ts.pos), hit = 0, bad = 0, nMiss = 0, nExtra = 0, nWrong = 0;
     HANDS.forEach(function (h) {
-      var should = openFreq(freqs(spot, h)) >= 0.5, did = !!painted[h], c = combos(h), td = tCells[h];
+      var f = freqs(spot, h), c = combos(h), td = tCells[h];
+      var best = ["F", "L", "R", "A"].reduce(function (x, y) { return f[y] > f[x] ? y : x; }, "F");
+      var did = painted[h] || "F", ok = did === best || f[did] >= 0.3;
       td.style.background = "";
-      if (should && did) { hit += c; td.className = "g-ok"; }
-      else if (should) { miss += c; nMiss++; td.className = "g-miss"; }
-      else if (did) { extra += c; nExtra++; td.className = "g-extra"; }
-      else td.className = "F";
+      td.title = h + " · 정답 " + NAMES[best];
+      if (best === "F" && did === "F") { td.className = "F"; return; }
+      if (ok) { hit += c; td.className = "g-ok"; return; }
+      bad += c;
+      if (did === "F") { nMiss++; td.className = "g-miss"; }
+      else if (best === "F") { nExtra++; td.className = "g-extra"; }
+      else { nWrong++; td.className = "g-wrong"; }
     });
-    var denom = hit + miss + extra, score = denom ? Math.round(hit / denom * 100) : 100;
+    var denom = hit + bad, score = denom ? Math.round(hit / denom * 100) : 100;
     $("t-result").hidden = false;
     $("t-legend").hidden = true;
     $("t-score").textContent = score + "%";
-    $("t-detail").textContent = "놓친 핸드 " + nMiss + "개 · 잘못 칠한 핸드 " + nExtra + "개 (콤보 가중 일치율)";
+    $("t-detail").textContent = "놓친 핸드 " + nMiss + "개 · 잘못 칠한 핸드 " + nExtra + "개 · 액션이 틀린 핸드 " + nWrong + "개 (콤보 가중 일치율)";
     var k = key(ts.stack, ts.pos);
     if (bestScores[k] == null || score > bestScores[k]) { bestScores[k] = score; save("paintBest", bestScores); }
     $("t-best").textContent = bestScores[k] + "%";

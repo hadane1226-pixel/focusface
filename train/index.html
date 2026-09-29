@@ -205,15 +205,23 @@
   <div class="two">
     <div class="gridbox" style="width:100%">
       <p class="chartcap" id="t-cap"></p>
+      <div class="frow" id="t-brushes" style="justify-content:center;margin-bottom:.7rem">
+        <button class="chip txt" data-brush="R" aria-pressed="true">오픈</button>
+        <button class="chip txt" data-brush="A" aria-pressed="false">올인</button>
+        <button class="chip txt" data-brush="L" aria-pressed="false">콜</button>
+        <button class="chip txt" data-brush="F" aria-pressed="false">지우기(폴드)</button>
+      </div>
       <table class="rg" id="t-grid"></table>
       <div class="legend" id="t-legend">
-        <span><i class="sw" style="background:var(--c-open)"></i>오픈 또는 주로 오픈으로 칠함</span>
+        <span><i class="sw" style="background:var(--c-open)"></i>오픈</span>
+        <span><i class="sw" style="background:var(--allin-bg)"></i>올인</span>
+        <span><i class="sw" style="background:var(--c-limp)"></i>콜(림프)</span>
         <span><i class="sw" style="background:var(--fold-cell)"></i>폴드</span>
       </div>
     </div>
     <div class="box">
       <p class="h3">방법</p>
-      <p style="margin:0 0 1rem;font-size:.92rem;color:var(--muted)">이 스팟에서 오픈하는 핸드(오픈 빈도 50% 이상, 주로 오픈 포함)를 전부 칠한 뒤 채점한다. 누르거나 드래그해서 칠하고, 칠한 칸을 다시 누르면 지워진다.</p>
+      <p style="margin:0 0 1rem;font-size:.92rem;color:var(--muted)">붓(오픈 · 올인 · 콜)을 고르고 이 스팟에서 그 액션을 하는 핸드를 칠한 뒤 채점한다. 칠하지 않은 칸은 폴드다. 누르거나 드래그해서 칠하고, 같은 붓으로 다시 누르면 지워진다. 섞어 쓰는 핸드는 30% 이상 쓰는 액션이면 정답이다.</p>
       <div class="tools" style="margin:0 0 1rem">
         <button class="btn pri" id="t-grade">채점</button>
         <button class="btn" id="t-clear">지우기</button>
@@ -225,6 +233,7 @@
           <span><i class="sw" style="background:var(--raise-bg)"></i>맞음</span>
           <span><i class="sw" style="background:var(--fold-bg)"></i>놓침</span>
           <span><i class="sw" style="background:var(--fold)"></i>잘못 칠함</span>
+          <span><i class="sw" style="background:var(--gold)"></i>액션 틀림</span>
         </div>
       </div>
       <p class="h3" style="margin-top:1.2rem">이 스팟 최고 점수</p>

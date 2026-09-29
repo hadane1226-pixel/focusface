@@ -59,6 +59,7 @@ button{font:inherit;color:inherit}
 .rg td.g-ok{background:var(--raise-bg);color:#25332c}
 .rg td.g-miss{background:var(--fold-bg);color:var(--fold)}
 .rg td.g-extra{background:var(--fold);color:#fff;text-decoration:line-through}
+.rg td.g-wrong{background:var(--gold);color:#1f1a0c}
 .rg td.clickable{cursor:pointer}
 .legend{display:flex;flex-wrap:wrap;gap:.9rem;justify-content:center;margin-top:.7rem;font-size:.8rem;color:var(--muted)}
 .legend span{display:inline-flex;align-items:center;gap:.35rem}
