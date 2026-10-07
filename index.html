@@ -32,6 +32,10 @@
 
   .tabs{max-width:64rem;margin:-3rem auto 0;padding:0 1.2rem;position:relative;display:grid;gap:1.1rem}
   @media (min-width:760px){.tabs{grid-template-columns:repeat(2,1fr)}}
+  @media (min-width:1040px){.tabs{grid-template-columns:repeat(3,1fr)}}
+  .faces{display:flex;margin:0 0 1.2rem}
+  .faces i{width:2.3rem;height:2.3rem;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;color:#fff;font-style:normal;font-weight:800;font-size:.95rem;border:2px solid var(--card);margin-right:-.45rem}
+  .faces i.off{opacity:.45}
   .tab{
     display:flex;flex-direction:column;background:var(--card);border:1px solid var(--line);border-radius:18px;
     padding:1.6rem 1.5rem 1.4rem;text-decoration:none;color:var(--text);
@@ -92,6 +96,14 @@
     <div class="mini" id="mini" aria-hidden="true"></div>
     <span class="go">훈련 시작 →</span>
   </a>
+
+  <a class="tab" href="exploit/">
+    <span class="kicker">TAB 03 · 실전</span>
+    <h2>익스플로잇 연습장</h2>
+    <p>일부러 한쪽으로 치우친 AI와 헤즈업으로 붙는다. 상대의 버릇을 찾아내 전략을 바꾸고, 운을 뺀 결과로 내 판단을 점검한다.</p>
+    <div class="faces" aria-hidden="true"><i style="background:#b0492f">올</i><i class="off" style="background:#4d7aa8">페</i><i class="off" style="background:#c19a3f">애</i><i class="off" style="background:#3f8f63">니</i></div>
+    <span class="go">대결하러 가기 →</span>
+  </a>
 </section>
 
 <section class="order">
@@ -100,6 +112,7 @@
     <li>입문 글 0~2장을 읽고 포지션과 오픈/폴드 개념을 잡는다.</li>
     <li>오픈 훈련에서 100bb 차트부터 보고, 퀴즈로 외운다.</li>
     <li>익숙해지면 짧은 스택(40bb 이하)과 칠하기 시험으로 넘어간다.</li>
+    <li>입문 글 12장(GTO와 익스)을 읽고, 익스 연습장에서 치우친 상대를 응징해 본다.</li>
   </ol>
 </section>
 
