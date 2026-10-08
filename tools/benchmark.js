@@ -106,8 +106,16 @@ function run(bot, hero, stack, n) {
   return { bb100: +(m * 100).toFixed(1), ci: +(se * 196).toFixed(1) };
 }
 
+// ONLY=nicky 처럼 일부 봇만 다시 계산하면, 나머지는 기존 exploit/benchmarks.js 값을 그대로 쓴다
+const ONLY = process.env.ONLY ? process.env.ONLY.split(",") : null;
 const out = {};
-for (const bot of B.BOTS.filter(b => b.available)) {
+if (ONLY) {
+  try {
+    const prev = require("fs").readFileSync(require("path").join(__dirname, "../exploit/benchmarks.js"), "utf8");
+    Object.assign(out, JSON.parse(prev.slice(prev.indexOf("{"), prev.lastIndexOf("}") + 1)));
+  } catch (e) { /* 기존 파일이 없으면 새로 만든다 */ }
+}
+for (const bot of B.BOTS.filter(b => b.available && (!ONLY || ONLY.indexOf(b.id) >= 0))) {
   out[bot.id] = {};
   for (const stack of STACKS) {
     const base = run(bot, solid(PRE_BASE, {}), stack, FINAL_HANDS);
